@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 import versioneer
+import pip
+import uuid
 from edat.edat_cmd_class import Tox
 
 
@@ -8,11 +10,13 @@ def get_cmd_class():
     cmd_class['test'] = Tox
     return cmd_class
 
+requires = [str(ir.req) for ir in pip.req.parse_requirements('requirements.txt', session=uuid.uuid1()) if ir.req]
+
 setup(
     name='edat',
     version=versioneer.get_version(),
     tests_require=['tox'],
-    install_requires=[],
+    install_requires=requires,
     cmdclass=get_cmd_class(),
     description='EDAT - Extensible Data Anonymization Tool',
     author='Sebastian Rodriguez, Gustavo Silva de Sousa',
