@@ -14,7 +14,7 @@ def main(cls=None, method=None, resource=None):
     :type resource: :class:`sandman.model.Model` or None
     :rtype: bool
     """
-    print "MAIN FUNCTION FOR THE AF"
+    print "MAIN FUNCTION FOR THE EDAT"
     return True
 
 if __name__ == "__main__":
