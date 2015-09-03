@@ -18,3 +18,4 @@ tox==2.1.1
 versioneer==0.15
 virtualenv==13.1.2
 git+https://github.com/s-rodriguez/af.git@develop#egg=af
+
