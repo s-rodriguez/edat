@@ -25,7 +25,6 @@ setup(
     extras_require={
         'testing': ['pytest'],
     },
-    zip_safe=False,
     # Para futuros entry points
     # entry_points={
     #    'console_scripts': [
