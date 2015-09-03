@@ -13,7 +13,7 @@ def get_cmd_class():
 import os
 print "Abs path"+os.path.abspath('.')
 print "Cwd"+os.getcwd()
-print "Dir cwd: "+os.listdir(os.getcwd())
+print "Dir cwd: "+'\n\t'.join(os.listdir(os.getcwd()))
 
 requires = [str(ir.req) for ir in pip.req.parse_requirements('requirements.txt', session=uuid.uuid1()) if ir.req]
 
