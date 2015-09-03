@@ -13,8 +13,6 @@ setup(
     name='edat',
     version=versioneer.get_version(),
     tests_require=['tox'],
-    install_requires=['af'],
-    dependency_links=['git+https://github.com/s-rodriguez/af.git@develop#egg=af'],
     cmdclass=get_cmd_class(),
     description='EDAT - Extensible Data Anonymization Tool',
     author='Sebastian Rodriguez, Gustavo Silva de Sousa',
