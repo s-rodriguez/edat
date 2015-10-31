@@ -8,11 +8,11 @@ def get_cmd_class():
     cmd_class['test'] = Tox
     return cmd_class
 
+
 setup(
     name='edat',
     version=versioneer.get_version(),
     tests_require=['tox'],
-    install_requires=[],
     cmdclass=get_cmd_class(),
     description='EDAT - Extensible Data Anonymization Tool',
     author='Sebastian Rodriguez, Gustavo Silva de Sousa',

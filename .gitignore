@@ -5,3 +5,4 @@ ot
 *.py[co]
 edat.egg-info/
 docs/_build/
+.eggs/
