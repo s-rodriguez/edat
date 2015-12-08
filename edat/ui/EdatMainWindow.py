@@ -14,7 +14,8 @@ class MainWindow(QtGui.QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        
+        self.showMaximized()
+
         text_edit = QtGui.QTextEdit()
         self.setCentralWidget(text_edit)
 
@@ -36,14 +37,3 @@ class MainWindow(QtGui.QMainWindow):
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Main window')    
         self.show()
-        
-        
-def main():
-    
-    app = QtGui.QApplication(sys.argv)
-    ex = MainWindow()
-    sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()    
