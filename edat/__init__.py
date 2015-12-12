@@ -1,7 +1,8 @@
 import sys
 
 from PyQt4.QtGui import QApplication
-from edat.controller.MainUIController import MainUiController
+
+from edat.controller.ui.MainUIController import MainUiController
 
 
 def main(cls=None, method=None, resource=None):
