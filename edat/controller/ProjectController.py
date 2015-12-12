@@ -1,4 +1,3 @@
-from datetime import datetime
 import os
 
 from edat.model.Project import Project
@@ -16,11 +15,11 @@ class ProjectController:
         validation_errors = self._validate_new_project_config(name, path_location)
         if validation_errors is None:
             try:
-                self._create_project_file(name, path_location)
+                new_project = Project(name, path_location)
+                self._create_project_file(new_project)
+                return new_project
             except Exception, e:
                 raise InfoException("Couldn't create project file.\n\t{0}".format(e))
-
-            return Project(name, path_location)
         else:
             raise InfoException(validation_errors)
 
@@ -35,16 +34,17 @@ class ProjectController:
         return validation_errors
 
     @staticmethod
-    def _create_project_file(name, path_location):
-        with open(os.path.join(path_location, name + EDAT_PROJECT_EXTENSION), 'w+') as project_file:
-            project_file.write('creation_timestamp||{}\n'.format(datetime.now()))
+    def _create_project_file(project):
+        file_content = project.project_file_representation()
+        with open(os.path.join(project.path_location, project.name + EDAT_PROJECT_EXTENSION), 'w+') as project_file:
+            project_file.write(file_content)
 
     @staticmethod
     def load_project(name, path_location):
         project_file_location = os.path.join(path_location, name + EDAT_PROJECT_EXTENSION)
         if os.path.isdir(path_location) and os.path.isfile(project_file_location):
             project = Project(name, path_location)
-            project.parse_file(project_file_location)
+            project.load_project_file(project_file_location)
             return project
         else:
             raise InfoException('There is no edat project on the selected location with that name')
