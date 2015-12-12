@@ -35,5 +35,5 @@ class ProjectController:
         return validation_errors
 
     def _create_project_file(self, name, path_location):
-        with open(os.path.join(path_location, name, EDAT_PROJECT_EXTENSION), 'w+') as project_file:
-            project_file.write('creation_timestamp: {}'.format(datetime.now()))
+        with open(os.path.join(path_location, name + EDAT_PROJECT_EXTENSION), 'w+') as project_file:
+            project_file.write('creation_timestamp: {}\n'.format(datetime.now()))
