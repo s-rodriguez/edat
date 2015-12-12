@@ -1,0 +1,3 @@
+
+class InfoException(Exception):
+    pass

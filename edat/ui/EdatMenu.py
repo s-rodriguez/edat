@@ -2,7 +2,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import webbrowser
 import os
-from EdatNewProjectDialog import EdatNewProjectDialog
+from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 
 class EdatMenu(QDialog):
     def __init__(self, controller, parent=None):

@@ -1,0 +1,2 @@
+
+EDAT_PROJECT_EXTENSION = '.edat'

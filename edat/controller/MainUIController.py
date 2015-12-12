@@ -1,7 +1,7 @@
 import sys
 
-from ui.EdatMainWindow import MainWindow
-from ui.EdatMenu import EdatMenu
+from edat.ui.EdatMainWindow import MainWindow
+from edat.ui.EdatMenu import EdatMenu
 
 
 class MainUiController:
