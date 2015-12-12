@@ -26,7 +26,6 @@ class SqliteController(DataController):
         tables = list(self.execute_query(query))
         return tables
 
-
     def table_columns_info(self, table_name):
         query = "SELECT * FROM {table}".format(table=table_name)
         with sqlite3.connect(self.data_location) as conn:
@@ -35,3 +34,7 @@ class SqliteController(DataController):
             cursor.execute(query)
             columns_info = list(map(lambda x: x[0], cursor.description))
             return columns_info
+
+    def get_table_data(self, table_name):
+        query = "SELECT * FROM {table}".format(table=table_name)
+        return list(self.execute_query(query))
