@@ -8,7 +8,6 @@ from EdatMenu import EdatMenu
 
 class EdatUiController:
     def __init__(self):
-
         self.edat_menu = EdatMenu(self)
         self.edat_main_window = None
 
