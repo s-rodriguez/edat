@@ -1,4 +1,4 @@
-
+from edat.exceptions.InfoException import InfoException
 
 class Project:
 
@@ -14,6 +14,9 @@ class Project:
             self.creation_timestamp)
 
     def parse_file(self, project_file_location):
-        with open(project_file_location) as project_file:
-            content = project_file.readlines()
-            self.creation_timestamp = content[0].split('||')[1].strip()
+        try:
+            with open(project_file_location) as project_file:
+                content = project_file.readlines()
+                self.creation_timestamp = content[0].split('||')[1].strip()
+        except Exception, e:
+            raise InfoException('The project file could not be imported. \n\t{0}'.format(e))
