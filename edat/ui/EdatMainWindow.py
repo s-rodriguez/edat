@@ -7,7 +7,7 @@ from PyQt4 import QtGui
 
 
 class MainWindow(QtGui.QMainWindow):
-    
+
     def __init__(self):
         super(MainWindow, self).__init__()
 
@@ -33,7 +33,7 @@ class MainWindow(QtGui.QMainWindow):
 
         toolbar = self.addToolBar('Exit')
         toolbar.addAction(exit_action)
-        
+
         self.setGeometry(300, 300, 350, 250)
-        self.setWindowTitle('Main window')    
+        self.setWindowTitle('Main window')
         self.show()
