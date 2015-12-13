@@ -1,8 +1,9 @@
 from datetime import datetime
-import json
 
 from edat.exceptions.InfoException import InfoException
-from edat.utils import DATETIME_FORMAT
+from edat.model.DataConfig import DataConfig
+from edat.utils import DATETIME_FORMAT, get_json_representation, load_json_file
+
 
 class Project:
 
@@ -10,6 +11,7 @@ class Project:
         self.name = name
         self.path_location = path_location
         self.creation_timestamp = datetime.now()
+        self.data_config = None
 
     def __str__(self):
         return "Project: {0} ({1}) [{2}]".format(
@@ -17,16 +19,24 @@ class Project:
             self.path_location,
             self.creation_timestamp)
 
+    def add_config_data(self, location, data_type, table):
+        self.data_config = DataConfig(self, location, data_type, table)
+
     def load_project_file(self, project_file_location):
         try:
-            with open(project_file_location) as project_file:
-                json_content = json.loads(project_file.read())
-                self.creation_timestamp = datetime.strptime(json_content['creation_timestamp'], DATETIME_FORMAT)
+            json_content = load_json_file(project_file_location)
+            self.creation_timestamp = datetime.strptime(json_content['creation_timestamp'], DATETIME_FORMAT)
+            if DataConfig.JSON_KEY in json_content.keys():
+                self.data_config.load_config(json_content[DataConfig.JSON_KEY])
         except Exception, e:
             raise InfoException('The project file could not be imported. \n\t{0}'.format(e))
 
     def project_file_representation(self):
-        p_representation = {}
-        p_representation['creation_timestamp'] = str(self.creation_timestamp)
+        p_representation = {
+            'creation_timestamp': str(self.creation_timestamp),
+        }
 
-        return json.dumps(p_representation, sort_keys=True, indent=2)
+        if self.data_config is not None:
+            p_representation[DataConfig.JSON_KEY] = self.data_config.config_representation()
+
+        return get_json_representation(p_representation)
