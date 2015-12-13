@@ -3,6 +3,7 @@ import os
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from edat.exceptions import InfoException
 
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.controller.ProjectController import ProjectController
@@ -41,16 +42,29 @@ class EdatMenu(QDialog):
         if self.new_project_dialog.result() == QDialog.Accepted:
             project_controller = ProjectController()
             name, path = self.new_project_dialog.get_project_name()
-            project_controller.create_project(name, path)
-            self.controller.show_project_main_window(project_controller)
+            try:
+                project_controller.create_project(name, path)
+                self.controller.show_project_main_window(project_controller)
+            except Exception as info_exception:
+                error_message = QMessageBox(self)
+                error_message.setWindowTitle("Create Project Error")
+                error_message.setText(info_exception.message)
+                error_message.exec_()
 
     def import_project(self):
         q_file_dialog = QFileDialog()
         filename = str(q_file_dialog.getOpenFileName(self, 'Import Project', os.getcwd()))
         if filename:
             project_controller = ProjectController()
-            project_controller.load_project(FileUtils.get_file_name(filename), FileUtils.get_file_directory(filename))
-            self.controller.show_project_main_window(project_controller)
+            try:
+                project_controller.load_project(FileUtils.get_file_name(filename), FileUtils.get_file_directory(filename))
+                self.controller.show_project_main_window(project_controller)
+            # see: info exception not work
+            except Exception as info_exception:
+                error_message = QMessageBox(self)
+                error_message.setWindowTitle("Import Project Error")
+                error_message.setText(info_exception.message)
+                error_message.exec_()
 
     @staticmethod
     def user_manual():
