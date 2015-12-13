@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
-import sys
 from PyQt4 import QtGui
+
+from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
 
 
 class EdatProjectMainWindow(QtGui.QMainWindow):
@@ -21,22 +21,27 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
         text_edit = QtGui.QTextEdit()
         self.setCentralWidget(text_edit)
 
-        # exit_action = QtGui.QAction(QtGui.QIcon('exit24.png'), 'Exit', self)
+        menu_bar = self.menuBar()
+        file_menu = menu_bar.addMenu('&File')
+
+        import_action = file_menu.addAction('Import DB')
+        import_action.triggered.connect(self.import_db)
+
         exit_action = QtGui.QAction('Exit', self)
         exit_action.setShortcut('Ctrl+Q')
         exit_action.setStatusTip('Exit application')
         exit_action.triggered.connect(self.close)
-
-        self.statusBar()
-
-        menu_bar = self.menuBar()
-        file_menu = menu_bar.addMenu('&File')
         file_menu.addAction(exit_action)
-
-        toolbar = self.addToolBar('Exit')
-        toolbar.addAction(exit_action)
 
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle(self.project_controller.project.name + ' - ' + self.project_controller.project.path_location)
 
         self.show()
+
+    def import_db(self):
+        wizard = QtGui.QWizard(self)
+        wizard.setWindowTitle('Import DB Wizard')
+        wizard.addPage(IntroductionPage(wizard))
+        wizard.addPage(SelectDbPage(wizard))
+        wizard.addPage(SelectTablePage(wizard))
+        wizard.exec_()

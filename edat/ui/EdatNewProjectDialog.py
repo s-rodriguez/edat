@@ -50,7 +50,6 @@ class EdatNewProjectDialog(QDialog):
 
     def show_directory(self):
         file_dialog = QFileDialog()
-
         filename = file_dialog.getExistingDirectory(self, 'Import Project', os.getenv('HOME'))
         self.project_directory_edit_text.setText(filename)
 
