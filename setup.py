@@ -26,9 +26,9 @@ setup(
         'testing': ['pytest'],
     },
     # Para futuros entry points
-    # entry_points={
-    #    'console_scripts': [
-    #        'edat = edat:main'
-    #    ]
-    # },
+    entry_points={
+       'console_scripts': [
+           'edat = edat:main'
+       ]
+    },
 )
