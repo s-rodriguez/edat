@@ -55,7 +55,7 @@ class EdatNewProjectDialog(QDialog):
         self.project_directory_edit_text.setText(filename)
 
     def get_project_name(self):
-        return self.project_directory_edit_text.text() + '/' + self.project_name_edit_text.text()
+        return str(self.project_name_edit_text.text()), str(self.project_directory_edit_text.text())
 
     def cancel_create_project(self):
         self.close()

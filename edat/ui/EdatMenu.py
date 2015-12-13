@@ -1,8 +1,13 @@
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 import webbrowser
 import os
+
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
+from edat.controller.ProjectController import ProjectController
+from edat.utils.FileUtils import FileUtils
+
 
 class EdatMenu(QDialog):
     def __init__(self, controller, parent=None):
@@ -34,13 +39,21 @@ class EdatMenu(QDialog):
         self.new_project_dialog.exec_()
 
         if self.new_project_dialog.result() == QDialog.Accepted:
-            self.new_project_dialog.get_project_name()
+            project_controller = ProjectController()
+            name, path = self.new_project_dialog.get_project_name()
+            project_controller.create_project(name, path)
+            self.controller.show_project_main_window(project_controller)
 
     def import_project(self):
-        filename = QFileDialog.getOpenFileName(self, 'Import Project', os.getenv('HOME'))
-        self.controller.show_main_window()
+        q_file_dialog = QFileDialog()
+        filename = str(q_file_dialog.getOpenFileName(self, 'Import Project', os.getcwd()))
+        if filename:
+            project_controller = ProjectController()
+            project_controller.load_project(FileUtils.get_file_name(filename), FileUtils.get_file_directory(filename))
+            self.controller.show_project_main_window(project_controller)
 
-    def user_manual(self):
+    @staticmethod
+    def user_manual():
         url = "https://github.com/s-rodriguez/edat"
         webbrowser.open(url, 2)
 

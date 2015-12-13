@@ -6,10 +6,12 @@ import sys
 from PyQt4 import QtGui
 
 
-class MainWindow(QtGui.QMainWindow):
+class EdatProjectMainWindow(QtGui.QMainWindow):
 
-    def __init__(self):
-        super(MainWindow, self).__init__()
+    def __init__(self, project_controller):
+        super(EdatProjectMainWindow, self).__init__()
+
+        self.project_controller = project_controller
 
         self.init_ui()
 
@@ -35,5 +37,6 @@ class MainWindow(QtGui.QMainWindow):
         toolbar.addAction(exit_action)
 
         self.setGeometry(300, 300, 350, 250)
-        self.setWindowTitle('Main window')
+        self.setWindowTitle(self.project_controller.project.name + ' - ' + self.project_controller.project.path_location)
+
         self.show()
