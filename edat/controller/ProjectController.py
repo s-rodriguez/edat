@@ -16,7 +16,7 @@ class ProjectController:
         if validation_errors is None:
             try:
                 self.project = Project(name, path_location)
-                self._create_project_file(self.project)
+                self._save_project_data()
                 return self.project
             except Exception, e:
                 raise InfoException("Couldn't create project file.\n\t{0}".format(e))
@@ -33,11 +33,16 @@ class ProjectController:
             validation_errors = 'The location selected is not a directory.'
         return validation_errors
 
-    @staticmethod
-    def _create_project_file(project):
-        file_content = project.project_file_representation()
-        with open(os.path.join(project.path_location, project.name + EDAT_PROJECT_EXTENSION), 'w+') as project_file:
-            project_file.write(file_content)
+    def _save_project_data(self):
+        # Every time we save a project, we override the file with the new content
+        with open(self.project.project_file_location(), 'w+') as project_file:
+            project_file.write(self.project.project_file_representation())
+
+    def save_project(self, name=None, path_location=None):
+        # If user chooses 'Save As' option, new name and/or location are to be changed and saved also
+        self.project.name = self.project.name if name is None else name
+        self.project.location = self.project.path_location if path_location is None else path_location
+        self._save_project_data()
 
     def load_project(self, name, path_location):
         project_file_location = os.path.join(path_location, name + EDAT_PROJECT_EXTENSION)
@@ -50,3 +55,14 @@ class ProjectController:
 
     def add_config_data_to_project(self, location, data_type, table):
         self.project.add_config_data(location, data_type, table)
+
+
+# TODO: This is just to test this, it should be removed afterwards!
+if __name__ == "__main__":
+    #pc = ProjectController()
+    #pc.create_project('project_test', '/home/srodriguez/repos')
+    #pc.load_project('project_test', '/home/srodriguez/repos')
+    #pc.add_config_data_to_project('a/directory/location', 'sqlite', 'Cars')
+    #pc.save_project()
+    #print pc.project.project_file_representation()
+    print 'ProjectController Main function -> Delete'

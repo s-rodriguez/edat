@@ -1,8 +1,14 @@
 from datetime import datetime
+import os
 
 from edat.exceptions.InfoException import InfoException
 from edat.model.DataConfig import DataConfig
-from edat.utils import DATETIME_FORMAT, get_json_representation, load_json_file
+from edat.utils import (
+    DATETIME_FORMAT,
+    EDAT_PROJECT_EXTENSION,
+    get_json_representation,
+    load_json_file,
+)
 
 
 class Project:
@@ -18,6 +24,9 @@ class Project:
             self.name,
             self.path_location,
             self.creation_timestamp)
+
+    def project_file_location(self):
+        return os.path.join(self.path_location, self.name + EDAT_PROJECT_EXTENSION)
 
     def add_config_data(self, location, data_type, table):
         self.data_config = DataConfig(self, location, data_type, table)
