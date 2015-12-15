@@ -1,10 +1,8 @@
 language: python
-virtualenv:
-    system_site_packages: true
 python:
-    - 2.7
-before_install:
-    - sudo apt-get install python-qt4
+    - "2.7_with_system_site_packages"
+install:
+    - "travis_retry sudo apt-get install python-qt4"
 script:
     - "python setup.py test"
 notifications:
