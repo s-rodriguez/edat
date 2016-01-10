@@ -1,7 +1,9 @@
 from PyQt4 import QtGui
 import os
-from PyQt4.QtCore import SIGNAL, QVariant
-from PyQt4.QtGui import QFileDialog, QPushButton, QHBoxLayout, QVBoxLayout, QLineEdit, QFormLayout, QLabel, QRadioButton
+
+from PyQt4.QtCore import SIGNAL
+from PyQt4.QtGui import QFileDialog, QPushButton, QHBoxLayout, QVBoxLayout, QLineEdit, QFormLayout, QLabel, QRadioButton, \
+    QTreeView, QAbstractItemView, QStandardItemModel, QStandardItem, QItemSelectionModel
 from af.controller.data.SqliteController import SqliteController
 
 
@@ -41,7 +43,7 @@ class SelectDbPage(QtGui.QWizardPage):
         self.project_directory_edit_text.setEnabled(False)
         self.form_layout.addRow('File:', self.project_directory_edit_text)
 
-        self.registerField("ProjectDirectory", self.project_directory_edit_text)
+        self.registerField("ProjectDirectory*", self.project_directory_edit_text)
 
         self.layout.addLayout(self.form_layout)
         self.layout.addStretch(1)
@@ -76,13 +78,39 @@ class SelectDbPage(QtGui.QWizardPage):
 class SelectTablePage(QtGui.QWizardPage):
     def __init__(self, parent):
         super(SelectTablePage, self).__init__(parent)
+
         self.selected_db = None
+        self.tables = None
+        self.layout = None
+
         self.setTitle('Select table')
+
+        self.show()
 
     def initializePage(self):
         self.selected_db = self.field("ProjectDirectory").toPyObject()
-        sqlite_controller = SqliteController(self.selected_db)
-        # fixme: cant open the selected db
-        # tables = sqlite_controller.db_available_tables()
-        # self.setSubTitle(tables)
+        sqlite_controller = SqliteController(str(self.selected_db));
+        self.tables = sqlite_controller.db_available_tables()
+        view = QTreeView()
+        view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        model = QStandardItemModel()
+        # model.setHorizontalHeaderLabels(['Name', 'Size Name'])
+        view.setModel(model)
+        view.setUniformRowHeights(True)
+
+        for table in self.tables:
+            for name in table:
+                table_name = str(name)
+                parent1 = QStandardItem(table_name)
+                table_columns = sqlite_controller.table_columns_info(table_name)
+                for column in table_columns:
+                    child = QStandardItem(str(column))
+                    child.setSelectable(False)
+                    parent1.appendRow(child)
+                model.appendRow(parent1)
+
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
+        self.layout.addWidget(view)
 
