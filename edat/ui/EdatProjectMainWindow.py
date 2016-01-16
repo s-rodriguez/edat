@@ -55,12 +55,15 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
         wizard.setWindowTitle('Import DB Wizard')
         wizard.addPage(IntroductionPage(wizard))
         wizard.addPage(SelectDbPage(wizard))
-        wizard.addPage(SelectTablePage(wizard))
+        select_table_page = SelectTablePage(wizard)
+        wizard.addPage(select_table_page)
         wizard.exec_()
 
         db_type = 'sqlite' if wizard.field("SQLiteButton").toPyObject() else 'csv'
         db_project_directory = str(wizard.field("ProjectDirectory").toPyObject())
-        db_table_selected = 'Cars' #TODO get table selected in wizard
+
+        selected_index = select_table_page.view.selectedIndexes()[0]
+        db_table_selected = str(selected_index.model().itemFromIndex(selected_index).accessibleText())
         self.project_controller.add_config_data_to_project(db_project_directory, db_type, db_table_selected)
 
     def save_project(self, parent=None, name=None, location_path=None):

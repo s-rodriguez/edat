@@ -77,6 +77,7 @@ class SelectDbPage(QtGui.QWizardPage):
                                                      'Select file', os.getcwd(), self.file_extension))
         self.project_directory_edit_text.setText(filename)
 
+
 class SelectTablePage(QtGui.QWizardPage):
     def __init__(self, parent):
         super(SelectTablePage, self).__init__(parent)
@@ -84,6 +85,7 @@ class SelectTablePage(QtGui.QWizardPage):
         self.selected_db = None
         self.tables = None
         self.layout = None
+        self.view = None
 
         self.setTitle('Select table')
 
@@ -94,18 +96,19 @@ class SelectTablePage(QtGui.QWizardPage):
         db_type = 'sqlite' if self.field("SQLiteButton").toPyObject() else 'csv'
         controller = DataFactory.create_controller(self.selected_db, db_type)
         self.tables = controller.db_available_tables()
-        view = QTreeView()
-        view.setSelectionBehavior(QAbstractItemView.SelectRows)
-        view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.view = QTreeView()
+        self.view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.view.setEditTriggers(QAbstractItemView.NoEditTriggers)
         model = QStandardItemModel()
         # model.setHorizontalHeaderLabels(['Name', 'Size Name'])
-        view.setModel(model)
-        view.setUniformRowHeights(True)
+        self.view.setModel(model)
+        self.view.setUniformRowHeights(True)
 
         for table in self.tables:
             for name in table:
                 table_name = str(name)
                 parent1 = QStandardItem(table_name)
+                parent1.setAccessibleText(table_name)
                 table_columns = controller.table_columns_info(table_name)
                 for column in table_columns:
                     child = QStandardItem(str(column))
@@ -115,5 +118,5 @@ class SelectTablePage(QtGui.QWizardPage):
 
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
-        self.layout.addWidget(view)
+        self.layout.addWidget(self.view)
 
