@@ -26,6 +26,7 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
         file_menu = menu_bar.addMenu('&File')
 
         import_action = file_menu.addAction('Import DB')
+        import_action.setShortcut('Ctrl+I')
         import_action.triggered.connect(self.import_db)
 
         save_project_action = file_menu.addAction('Save')
@@ -57,6 +58,11 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
         wizard.addPage(SelectTablePage(wizard))
         wizard.exec_()
 
+        db_type = 'sqlite' if wizard.field("SQLiteButton").toPyObject() else 'csv'
+        db_project_directory = str(wizard.field("ProjectDirectory").toPyObject())
+        db_table_selected = 'Cars' #TODO
+        self.project_controller.add_config_data_to_project(db_project_directory, db_type, db_table_selected)
+
     def save_project(self, parent=None, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
 
@@ -75,7 +81,7 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
                 error_message.exec_()
 
     def close_application(self):
-        if self.project_controller.unsaved_changes():
+        if self.project_controller.unsaved_changes:
             quit_msg = "All unsaved changes will be lost. Do you want to save them?"
             reply = QtGui.QMessageBox.question(self, 'Save last changes',
                                                quit_msg, QtGui.QMessageBox.Save, QtGui.QMessageBox.Cancel)

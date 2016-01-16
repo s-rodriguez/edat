@@ -1,0 +1,5 @@
+{
+  "config": "{\n  \"data_type\": \"sqlite\", \n  \"location\": \"/home/srodriguez/repos/edat/edat/utils/test.db\", \n  \"table\": \"Cars\"\n}", 
+  "creation_timestamp": "2016-01-13 19:29:12.927601", 
+  "last_saved_timestamp": "2016-01-15 21:50:46.494356"
+}

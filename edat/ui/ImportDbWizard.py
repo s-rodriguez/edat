@@ -28,6 +28,7 @@ class IntroductionPage(QtGui.QWizardPage):
 
         self.setLayout(layout)
 
+
 class SelectDbPage(QtGui.QWizardPage):
     def __init__(self, parent):
         super(SelectDbPage, self).__init__(parent)

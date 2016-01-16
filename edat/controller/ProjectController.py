@@ -9,6 +9,7 @@ class ProjectController:
 
     def __init__(self):
         self.project = None
+        self.unsaved_changes = False
 
     def create_project(self, name, path_location):
 
@@ -35,8 +36,10 @@ class ProjectController:
 
     def _save_project_data(self):
         # Every time we save a project, we override the file with the new content
+        project_representation = self.project.project_file_representation(save=True)
         with open(self.project.project_file_location(), 'w+') as project_file:
-            project_file.write(self.project.project_file_representation(save=True))
+            project_file.write(project_representation)
+        self.unsaved_changes = False
 
     def save_project(self, name=None, path_location=None):
         # If user chooses 'Save As' option, new name and/or location are to be changed and saved also
@@ -55,9 +58,11 @@ class ProjectController:
 
     def add_config_data_to_project(self, location, data_type, table):
         self.project.add_config_data(location, data_type, table)
+        self.unsaved_changes = True
 
     def unsaved_changes(self):
-        return self.project.unsaved_changes
+        return self.unsaved_changes
+
 
 # TODO: This is just to test this, it should be removed afterwards!
 if __name__ == "__main__":

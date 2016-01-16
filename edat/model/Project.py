@@ -39,6 +39,7 @@ class Project:
             self.creation_timestamp = datetime.strptime(json_content['creation_timestamp'], DATETIME_FORMAT)
             self.last_saved_time = datetime.strptime(json_content['last_saved_timestamp'], DATETIME_FORMAT)
             if DataConfig.JSON_KEY in json_content.keys():
+                self.data_config = DataConfig(self)
                 self.data_config.load_config(json_content[DataConfig.JSON_KEY])
         except Exception, e:
             raise InfoException('The project file could not be imported. \n\t{0}'.format(e))
