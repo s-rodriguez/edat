@@ -17,7 +17,9 @@ class Project:
         self.name = name
         self.path_location = path_location
         self.creation_timestamp = datetime.now()
+        self.last_saved_time = None
         self.data_config = None
+        self.unsaved_changes = False
 
     def __str__(self):
         return "Project: {0} ({1}) [{2}]".format(
@@ -35,14 +37,19 @@ class Project:
         try:
             json_content = load_json_file(project_file_location)
             self.creation_timestamp = datetime.strptime(json_content['creation_timestamp'], DATETIME_FORMAT)
+            self.last_saved_time = datetime.strptime(json_content['last_saved_timestamp'], DATETIME_FORMAT)
             if DataConfig.JSON_KEY in json_content.keys():
                 self.data_config.load_config(json_content[DataConfig.JSON_KEY])
         except Exception, e:
             raise InfoException('The project file could not be imported. \n\t{0}'.format(e))
 
-    def project_file_representation(self):
+    def project_file_representation(self, save=False):
+        if save:
+            self.last_saved_time = datetime.now()
+
         p_representation = {
             'creation_timestamp': str(self.creation_timestamp),
+            'last_saved_timestamp': str(self.last_saved_time),
         }
 
         if self.data_config is not None:
