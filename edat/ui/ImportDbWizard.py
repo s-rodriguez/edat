@@ -4,7 +4,8 @@ import os
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QFileDialog, QPushButton, QHBoxLayout, QVBoxLayout, QLineEdit, QFormLayout, QLabel, QRadioButton, \
     QTreeView, QAbstractItemView, QStandardItemModel, QStandardItem, QItemSelectionModel
-from af.controller.data.SqliteController import SqliteController
+
+from af.controller.data.DataFactory import DataFactory
 
 
 class IntroductionPage(QtGui.QWizardPage):
@@ -89,9 +90,10 @@ class SelectTablePage(QtGui.QWizardPage):
         self.show()
 
     def initializePage(self):
-        self.selected_db = self.field("ProjectDirectory").toPyObject()
-        sqlite_controller = SqliteController(str(self.selected_db));
-        self.tables = sqlite_controller.db_available_tables()
+        self.selected_db = str(self.field("ProjectDirectory").toPyObject())
+        db_type = 'sqlite' if self.field("SQLiteButton").toPyObject() else 'csv'
+        controller = DataFactory.create_controller(self.selected_db, db_type)
+        self.tables = controller.db_available_tables()
         view = QTreeView()
         view.setSelectionBehavior(QAbstractItemView.SelectRows)
         view.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -104,7 +106,7 @@ class SelectTablePage(QtGui.QWizardPage):
             for name in table:
                 table_name = str(name)
                 parent1 = QStandardItem(table_name)
-                table_columns = sqlite_controller.table_columns_info(table_name)
+                table_columns = controller.table_columns_info(table_name)
                 for column in table_columns:
                     child = QStandardItem(str(column))
                     child.setSelectable(False)
