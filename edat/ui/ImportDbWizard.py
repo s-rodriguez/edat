@@ -1,7 +1,7 @@
 from PyQt4 import QtGui
 import os
 
-from PyQt4.QtCore import SIGNAL
+from PyQt4.QtCore import SIGNAL, Qt
 from PyQt4.QtGui import QFileDialog, QPushButton, QHBoxLayout, QVBoxLayout, QLineEdit, QFormLayout, QLabel, QRadioButton, \
     QTreeView, QAbstractItemView, QStandardItemModel, QStandardItem, QItemSelectionModel
 
@@ -86,37 +86,70 @@ class SelectTablePage(QtGui.QWizardPage):
         self.tables = None
         self.layout = None
         self.view = None
+        self.model = None
+        self.last_selection = -1
+        self.selected_table = None
 
         self.setTitle('Select table')
 
         self.show()
 
     def initializePage(self):
+
         self.selected_db = str(self.field("ProjectDirectory").toPyObject())
         db_type = 'sqlite' if self.field("SQLiteButton").toPyObject() else 'csv'
         controller = DataFactory.create_controller(self.selected_db, db_type)
         self.tables = controller.db_available_tables()
-        self.view = QTreeView()
-        self.view.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        model = QStandardItemModel()
-        # model.setHorizontalHeaderLabels(['Name', 'Size Name'])
-        self.view.setModel(model)
-        self.view.setUniformRowHeights(True)
 
+        view = QTreeView()
+        view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.init_model(controller, view)
+
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(view)
+        self.setLayout(self.layout)
+
+    def init_model(self, controller, view):
+        self.model = QStandardItemModel()
+        self.model.setHorizontalHeaderLabels(['Table Name'])
+        self.model.itemChanged.connect(self.on_item_changed)
+        view.setModel(self.model)
+        view.setUniformRowHeights(True)
         for table in self.tables:
             for name in table:
                 table_name = str(name)
-                parent1 = QStandardItem(table_name)
-                parent1.setAccessibleText(table_name)
+                root_table_item = QStandardItem(table_name)
+                root_table_item.setAccessibleText(table_name)
+                root_table_item.setCheckable(True)
+                root_table_caption = QStandardItem("Columns:")
+                root_table_item.appendRow(root_table_caption)
+
                 table_columns = controller.table_columns_info(table_name)
                 for column in table_columns:
                     child = QStandardItem(str(column))
                     child.setSelectable(False)
-                    parent1.appendRow(child)
-                model.appendRow(parent1)
+                    root_table_caption.appendRow(child)
+                self.model.appendRow(root_table_item)
 
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
-        self.layout.addWidget(self.view)
+    def isComplete(self):
+        return self.selected_table is not None
 
+    def on_item_changed(self):
+        for x in range(0, self.model.rowCount()):
+            item = self.model.item(x, 0)
+            if item.checkState() == Qt.Checked and self.last_selection != x:
+                self.last_selection = x
+                break
+
+        self.selected_table = None
+
+        for y in range(0, self.model.rowCount()):
+            item = self.model.item(y, 0)
+            if item.checkState() == Qt.Checked:
+                if self.last_selection != y:
+                    item.setCheckState(Qt.Unchecked)
+                else:
+                    self.selected_table = item
+
+        self.completeChanged.emit()
