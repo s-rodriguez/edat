@@ -60,10 +60,8 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
         wizard.exec_()
 
         db_type = 'sqlite' if wizard.field("SQLiteButton").toPyObject() else 'csv'
-        db_project_directory = str(wizard.field("ProjectDirectory").toPyObject())
-
-        selected_index = select_table_page.view.selectedIndexes()[0]
-        db_table_selected = str(selected_index.model().itemFromIndex(selected_index).accessibleText())
+        db_project_directory = str(select_table_page.selected_db)
+        db_table_selected = str(select_table_page.selected_table.accessibleText())
         self.project_controller.add_config_data_to_project(db_project_directory, db_type, db_table_selected)
 
     def save_project(self, parent=None, name=None, location_path=None):
