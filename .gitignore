@@ -6,4 +6,4 @@ ot
 edat.egg-info/
 docs/_build/
 .eggs/
-.edat
+*.edat

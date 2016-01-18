@@ -74,7 +74,7 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
         if new_project_dialog.result() == QtGui.QDialog.Accepted:
             name, path = new_project_dialog.get_project_name()
             try:
-                return self.save_project(name, path)
+                return self.save_project(name=name, location_path=path)
             except Exception as info_exception:
                 error_message = QtGui.QMessageBox(self)
                 error_message.setWindowTitle("Save Project As Error")

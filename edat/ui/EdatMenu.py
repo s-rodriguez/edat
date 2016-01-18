@@ -1,13 +1,13 @@
-import webbrowser
 import os
+import webbrowser
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from edat.exceptions import InfoException
 
-from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
+from af.utils.FileUtils import FileUtils
 from edat.controller.ProjectController import ProjectController
-from edat.utils.FileUtils import FileUtils
+from edat.exceptions import InfoException
+from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 
 
 class EdatMenu(QDialog):

@@ -1,8 +1,8 @@
 import os
 
-from edat.model.Project import Project
+from af.utils import EDAT_PROJECT_EXTENSION
 from edat.exceptions.InfoException import InfoException
-from edat.utils import EDAT_PROJECT_EXTENSION
+from edat.model.Project import Project
 
 
 class ProjectController:
