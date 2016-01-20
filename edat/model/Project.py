@@ -44,6 +44,11 @@ class Project:
         except Exception, e:
             raise InfoException('The project file could not be imported. \n\t{0}'.format(e))
 
+    def data_config_representation(self):
+        if self.data_config is not None:
+            return self.data_config.config_representation()
+        return None
+
     def project_file_representation(self, save=False):
         if save:
             self.last_saved_time = datetime.now()
@@ -53,7 +58,8 @@ class Project:
             'last_saved_timestamp': str(self.last_saved_time),
         }
 
-        if self.data_config is not None:
-            p_representation[DataConfig.JSON_KEY] = self.data_config.config_representation()
+        data_config_representation = self.data_config_representation()
+        if data_config_representation is not None:
+            p_representation[DataConfig.JSON_KEY] = data_config_representation
 
         return get_json_representation(p_representation)

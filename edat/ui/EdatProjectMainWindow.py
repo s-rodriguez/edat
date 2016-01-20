@@ -5,7 +5,7 @@ from PyQt4 import QtGui
 
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
-
+from edat import utils
 
 class EdatProjectMainWindow(QtGui.QMainWindow):
 
@@ -38,6 +38,11 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
         save_project_action.setShortcut('Ctrl+Shift+S')
         save_project_action.setStatusTip('Save Project As')
         save_project_action.triggered.connect(self.save_project_as)
+
+        save_project_action = file_menu.addAction('Export Configuration')
+        save_project_action.setShortcut('Ctrl+E')
+        save_project_action.setStatusTip('Export Configuration')
+        save_project_action.triggered.connect(self.export_configuration)
 
         exit_action = QtGui.QAction('Exit', self)
         exit_action.setShortcut('Ctrl+Q')
@@ -76,10 +81,18 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
             try:
                 return self.save_project(name=name, location_path=path)
             except Exception as info_exception:
-                error_message = QtGui.QMessageBox(self)
-                error_message.setWindowTitle("Save Project As Error")
-                error_message.setText(info_exception.message)
-                error_message.exec_()
+                utils.showMessageAlertBox(parent=self, title="Save Project As Error", message=info_exception.message)
+
+    def export_configuration(self):
+        new_config_dialog = EdatNewProjectDialog(self)
+        new_config_dialog.exec_()
+
+        if new_config_dialog.result() == QtGui.QDialog.Accepted:
+            name, path = new_config_dialog.get_project_name()
+            try:
+                return self.project_controller.export_configuration(name=name, location_path=path)
+            except Exception as info_exception:
+                utils.showMessageAlertBox(parent=self, title="Could not export configuration", message=info_exception.message)
 
     def close_application(self):
         if self.project_controller.unsaved_changes:

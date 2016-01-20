@@ -1,6 +1,6 @@
 import os
 
-from af.utils import EDAT_PROJECT_EXTENSION
+from af.utils import EDAT_PROJECT_EXTENSION, CONFIG_EXTENSION
 from edat.exceptions.InfoException import InfoException
 from edat.model.Project import Project
 
@@ -62,6 +62,16 @@ class ProjectController:
 
     def unsaved_changes(self):
         return self.unsaved_changes
+
+    def export_configuration(self, name, location_path):
+        data_config_representation = self.project.data_config_representation()
+
+        if data_config_representation is None:
+            raise InfoException('No data configuration available for this project.')
+
+        config_location = os.path.join(location_path, name + CONFIG_EXTENSION)
+        with open(config_location, 'w+') as config_file:
+            config_file.write(data_config_representation)
 
 
 # TODO: This is just to test this, it should be removed afterwards!
