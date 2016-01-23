@@ -32,6 +32,7 @@ def transform_ui_files_into_py():
             input_file = os.path.abspath(os.path.join(design_path, file))
             output_file = os.path.abspath(os.path.join(edat_dir, 'ui', file_output_name))
             transform_ui(input_file, output_file)
+            add_logic_to_py_file(design_path, file_output_name, output_file)
 
     print "[+] Finished transforming."
 
@@ -50,3 +51,12 @@ def transform_ui(input_path_file, output_path_file):
     })
 
     invoke(Driver(options, input_path_file))
+
+
+def add_logic_to_py_file(design_path, file, output_file):
+    logic_file_path = os.path.abspath(os.path.join(design_path, "__"+file.replace('.py', '.logic')))
+    if os.path.isfile(logic_file_path):
+        with open(logic_file_path, 'r') as f:
+            content = f.read()
+            with open(output_file, 'a') as file_output:
+                file_output.write(content)
