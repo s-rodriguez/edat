@@ -5,7 +5,8 @@ from PyQt4 import QtGui
 
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
-from edat import utils
+import edat.utils.ui as utils_ui
+
 
 class EdatProjectMainWindow(QtGui.QMainWindow):
 
@@ -81,7 +82,7 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
             try:
                 return self.save_project(name=name, location_path=path)
             except Exception as info_exception:
-                utils.showMessageAlertBox(parent=self, title="Save Project As Error", message=info_exception.message)
+                utils_ui.showMessageAlertBox(parent=self, title="Save Project As Error", message=info_exception.message)
 
     def export_configuration(self):
         new_config_dialog = EdatNewProjectDialog(self)
@@ -92,7 +93,7 @@ class EdatProjectMainWindow(QtGui.QMainWindow):
             try:
                 return self.project_controller.export_configuration(name=name, location_path=path)
             except Exception as info_exception:
-                utils.showMessageAlertBox(parent=self, title="Could not export configuration", message=info_exception.message)
+                utils_ui.showMessageAlertBox(parent=self, title="Could not export configuration", message=info_exception.message)
 
     def close_application(self):
         if self.project_controller.unsaved_changes:
