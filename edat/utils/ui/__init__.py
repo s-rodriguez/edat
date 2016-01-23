@@ -54,7 +54,7 @@ def transform_ui(input_path_file, output_path_file):
 
 
 def add_logic_to_py_file(design_path, file, output_file):
-    logic_file_path = os.path.abspath(os.path.join(design_path, "__"+file.replace('.py', '.logic')))
+    logic_file_path = os.path.abspath(os.path.join(design_path, file.replace('.py', '.logic')))
     if os.path.isfile(logic_file_path):
         with open(logic_file_path, 'r') as f:
             content = f.read()

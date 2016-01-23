@@ -55,7 +55,6 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Ok", None))
         self.pushButton.setText(_translate("MainWindow", "Cancel", None))
 
-
     def design_foo_function(self):
         # do stuff
         return 1
