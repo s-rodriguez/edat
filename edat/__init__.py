@@ -3,7 +3,6 @@ import sys
 
 from PyQt4.QtGui import QApplication
 from edat.controller.ui.MainUIController import MainUiController
-from edat.utils.ui import transform_ui_files_into_py
 
 from edat._version import get_versions
 __version__ = get_versions()['version']
@@ -24,5 +23,6 @@ def main(cls=None, method=None, resource=None):
 
 if __name__ == "__main__":
     if STATUS == 'debug':
+        from edat.utils.ui import transform_ui_files_into_py
         transform_ui_files_into_py()
     main()
