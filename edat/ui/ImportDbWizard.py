@@ -3,7 +3,7 @@ import os
 
 from PyQt4.QtCore import SIGNAL, Qt
 from PyQt4.QtGui import QFileDialog, QPushButton, QHBoxLayout, QVBoxLayout, QLineEdit, QFormLayout, QLabel, QRadioButton, \
-    QTreeView, QAbstractItemView, QStandardItemModel, QStandardItem, QItemSelectionModel
+    QTreeView, QAbstractItemView, QStandardItemModel, QStandardItem
 
 from af.controller.data.DataFactory import DataFactory
 
@@ -18,14 +18,18 @@ class IntroductionPage(QtGui.QWizardPage):
         top_label.setWordWrap(True)
         layout.addWidget(top_label)
 
-        sqlite_button = QRadioButton(self.tr("SQLite"))
-        sqlite_button.setChecked(True)
-        self.registerField("SQLiteButton", sqlite_button)
-        layout.addWidget(sqlite_button)
+        data_factory = DataFactory()
 
-        csv_button = QRadioButton(self.tr("CSV"))
-        self.registerField("CSVbutton", csv_button)
-        layout.addWidget(csv_button)
+        number_group = QtGui.QButtonGroup()
+
+        controllers = data_factory.get_available_controllers()
+        for controller in controllers:
+            button = QRadioButton(self.tr(controller))
+            number_group.addButton(button)
+            layout.addWidget(button)
+            self.registerField(controller, button)
+            if controllers.index(controller) == 0:
+                button.setChecked(True)
 
         self.setLayout(layout)
 
@@ -65,11 +69,11 @@ class SelectDbPage(QtGui.QWizardPage):
         self.show()
 
     def initializePage(self):
-        sqlite_option = self.field("SQLiteButton").toPyObject()
-        if sqlite_option:
-            self.file_extension = 'SQLite (*.sqlite3 *.db *.sqlite)'
-        else:
-            self.file_extension = 'CSV (*.csv)'
+        for controller in DataFactory.get_available_controllers():
+            selected_button = self.field(controller).toPyObject()
+            if selected_button:
+                self.file_extension = DataFactory.get_controller_file_extension(controller)
+                break
 
     def show_directory(self):
         q_file_dialog = QFileDialog()
@@ -89,6 +93,7 @@ class SelectTablePage(QtGui.QWizardPage):
         self.model = None
         self.last_selection = -1
         self.selected_table = None
+        self.controller = None
 
         self.setTitle('Select table')
 
@@ -97,14 +102,20 @@ class SelectTablePage(QtGui.QWizardPage):
     def initializePage(self):
 
         self.selected_db = str(self.field("ProjectDirectory").toPyObject())
-        db_type = 'sqlite' if self.field("SQLiteButton").toPyObject() else 'csv'
-        controller = DataFactory.create_controller(self.selected_db, db_type)
-        self.tables = controller.db_available_tables()
+
+        for controller_type in DataFactory.get_available_controllers():
+            selected_button = self.field(controller_type).toPyObject()
+            #todo:manejo de error
+            if selected_button:
+                self.controller = DataFactory.create_controller(self.selected_db, controller_type)
+                break
+
+        self.tables = self.controller.db_available_tables()
 
         view = QTreeView()
         view.setSelectionBehavior(QAbstractItemView.SelectRows)
         view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.init_model(controller, view)
+        self.init_model(self.controller, view)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(view)

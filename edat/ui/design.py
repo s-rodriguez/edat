@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Sebastian\Documents\TPP\repos\edat\edat\ui\design\design.ui'
+# Form implementation generated from reading ui file '/home/gustavo/facultad/tpprof/app/edat/edat/ui/design/design.ui'
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created: Sun Jan 24 22:56:26 2016
+#      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -55,6 +56,3 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "Ok", None))
         self.pushButton.setText(_translate("MainWindow", "Cancel", None))
 
-    def design_foo_function(self):
-        # do stuff
-        return 1
