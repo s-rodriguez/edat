@@ -7,7 +7,7 @@ from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
 import edat.utils.ui as utils_ui
 from edat.ui.CSVTableView import CSVTableView
-from ui.SQLTableView import SQLTableView
+from edat.ui.SQLTableView import SQLTableView
 
 
 class ProjectMainWindow(QtGui.QMainWindow):
