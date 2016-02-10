@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '/home/gustavo/facultad/tpprof/app/edat/edat/ui/design/design.ui'
 #
-# Created: Wed Feb 10 15:44:18 2016
+# Created: Wed Feb 10 18:42:55 2016
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!

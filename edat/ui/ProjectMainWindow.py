@@ -9,6 +9,7 @@ import edat.utils.ui as utils_ui
 from edat.ui.CSVTableView import CSVTableView
 from edat.ui.SQLTableView import SQLTableView
 from af.utils.FileUtils import FileUtils
+from UIFactoryHelper import UIFactoryHelper
 
 
 class ProjectMainWindow(QtGui.QMainWindow):
@@ -81,12 +82,9 @@ class ProjectMainWindow(QtGui.QMainWindow):
         table_name_label.setText("Table: " + db_table_selected + " (Database: " + FileUtils.get_file_name(db_path) + " )")
         self.input_data_layout.addWidget(table_name_label)
 
-        # TODO: cambiar por logica generica independiente del tipo de los datos
-        if select_table_page.controller.CONTROLLER_TYPE == 'sqlite':
-            input_data_view = SQLTableView(self.project_controller)
-        else:
-            input_data_view = CSVTableView(self.project_controller)
-        self.input_data_layout.addWidget(input_data_view)
+        ui_factory = UIFactoryHelper.get_factory(select_table_page.controller.CONTROLLER_TYPE)
+        ui_factory.create_table_view(self.project_controller)
+        self.input_data_layout.addWidget(ui_factory.create_table_view(self.project_controller))
 
     def save_project(self, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
