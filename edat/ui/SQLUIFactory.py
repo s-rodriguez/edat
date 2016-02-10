@@ -1,5 +1,5 @@
-from UIFactory import UIFactory
-from ui.SQLTableView import SQLTableView
+from edat.ui.UIFactory import UIFactory
+from edat.ui.SQLTableView import SQLTableView
 
 
 class SQLUiFactory(UIFactory):

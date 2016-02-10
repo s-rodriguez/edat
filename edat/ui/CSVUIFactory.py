@@ -1,5 +1,5 @@
-from UIFactory import UIFactory
-from ui.CSVTableView import CSVTableView
+from edat.ui.UIFactory import UIFactory
+from edat.ui.CSVTableView import CSVTableView
 
 class CSVUIFactory(UIFactory):
 

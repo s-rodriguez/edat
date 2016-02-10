@@ -6,8 +6,6 @@ from PyQt4 import QtGui
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
 import edat.utils.ui as utils_ui
-from edat.ui.CSVTableView import CSVTableView
-from edat.ui.SQLTableView import SQLTableView
 from af.utils.FileUtils import FileUtils
 from UIFactoryHelper import UIFactoryHelper
 
