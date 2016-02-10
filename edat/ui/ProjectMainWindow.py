@@ -8,6 +8,7 @@ from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePa
 import edat.utils.ui as utils_ui
 from edat.ui.CSVTableView import CSVTableView
 from edat.ui.SQLTableView import SQLTableView
+from af.utils.FileUtils import FileUtils
 
 
 class ProjectMainWindow(QtGui.QMainWindow):
@@ -16,8 +17,14 @@ class ProjectMainWindow(QtGui.QMainWindow):
         super(ProjectMainWindow, self).__init__()
         self.project_controller = project_controller
 
-        self.ctr_frame = QtGui.QWidget()
         self.layout = QtGui.QHBoxLayout()
+
+        self.input_data_layout = QtGui.QVBoxLayout()
+        self.layout.addLayout(self.input_data_layout, 1)
+        self.data_configuration_layout = QtGui.QVBoxLayout()
+        self.layout.addLayout(self.data_configuration_layout, 1)
+
+        self.ctr_frame = QtGui.QWidget()
         self.ctr_frame.setLayout(self.layout)
         self.setCentralWidget(self.ctr_frame)
 
@@ -25,11 +32,9 @@ class ProjectMainWindow(QtGui.QMainWindow):
 
     def init_ui(self):
         self.init_menu_bar()
-
         self.showMaximized()
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle(self.project_controller.project.name + ' - ' + self.project_controller.project.path_location)
-        self.input_data_view = None
         self.show()
 
     def init_menu_bar(self):
@@ -37,7 +42,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
         file_menu = menu_bar.addMenu('&File')
         import_action = file_menu.addAction('Import DB')
         import_action.setShortcut('Ctrl+I')
-        import_action.triggered.connect(self.import_db)
+        import_action.triggered.connect(self.show_import_db_wizard)
         save_project_action = file_menu.addAction('Save')
         save_project_action.setShortcut('Ctrl+S')
         save_project_action.setStatusTip('Save Project')
@@ -56,7 +61,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
         exit_action.triggered.connect(self.close_application)
         file_menu.addAction(exit_action)
 
-    def import_db(self):
+    def show_import_db_wizard(self):
         wizard = QtGui.QWizard(self)
         wizard.setWindowTitle('Import DB Wizard')
         wizard.addPage(IntroductionPage(wizard))
@@ -69,15 +74,19 @@ class ProjectMainWindow(QtGui.QMainWindow):
         db_table_selected = str(select_table_page.selected_table.accessibleText())
         self.project_controller.add_config_data_to_project(db_path, select_table_page.controller.CONTROLLER_TYPE, db_table_selected)
 
-        if self.input_data_view is not None:
-            self.layout.removeWidget(self.input_data_view)
+        for i in reversed(range(self.input_data_layout.count())):
+            self.input_data_layout.itemAt(i).widget().setParent(None)
+
+        table_name_label = QtGui.QLabel()
+        table_name_label.setText("Table: " + db_table_selected + " (Database: " + FileUtils.get_file_name(db_path) + " )")
+        self.input_data_layout.addWidget(table_name_label)
 
         # TODO: cambiar por logica generica independiente del tipo de los datos
         if select_table_page.controller.CONTROLLER_TYPE == 'sqlite':
-            self.input_data_view = SQLTableView(self.project_controller)
+            input_data_view = SQLTableView(self.project_controller)
         else:
-            self.input_data_view = CSVTableView(self.project_controller)
-        self.layout.addWidget(self.input_data_view, 5)
+            input_data_view = CSVTableView(self.project_controller)
+        self.input_data_layout.addWidget(input_data_view)
 
     def save_project(self, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
