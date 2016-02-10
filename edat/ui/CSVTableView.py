@@ -13,11 +13,10 @@ class CSVTableView(DataTableView):
         columns = csv_controller.table_columns_info()
         rows_size = csv_controller.amount_of_rows()
         columns_size = len(columns)
-        model = QStandardItemModel(columns_size, rows_size)
+        model = QStandardItemModel(rows_size, columns_size)
         model.setHorizontalHeaderLabels(columns)
-
         table_date = csv_controller.get_table_data()
-        for row in range(rows_size):
-            for column in range(columns_size):
+        for column in range(columns_size):
+            for row in range(rows_size):
                 model.setItem(row, column, QStandardItem(table_date[row][column]))
         return model

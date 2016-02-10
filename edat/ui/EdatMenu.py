@@ -59,8 +59,8 @@ class EdatMenu(QDialog):
             try:
                 project_controller.load_project(FileUtils.get_file_name(filename), FileUtils.get_file_directory(filename))
                 self.controller.show_project_main_window(project_controller)
-            # see: info exception not work
-            except InfoException, e:
+            # FIXME: info exception dont catch in except
+            except Exception, e:
                 error_message = QMessageBox(self)
                 error_message.setWindowTitle("Import Project Error")
                 error_message.setText(e.message)

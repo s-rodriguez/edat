@@ -97,6 +97,14 @@ class SelectTablePage(QtGui.QWizardPage):
 
         self.setTitle('Select table')
 
+        self.view = QTreeView()
+        self.view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.view.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(self.view)
+        self.setLayout(self.layout)
+
         self.show()
 
     def initializePage(self):
@@ -105,28 +113,20 @@ class SelectTablePage(QtGui.QWizardPage):
 
         for controller_type in DataFactory.get_available_controllers():
             selected_button = self.field(controller_type).toPyObject()
-            #todo:manejo de error
+            # TODO : manejo de error
             if selected_button:
                 self.controller = DataFactory.create_controller(self.selected_db, controller_type)
                 break
 
         self.tables = self.controller.db_available_tables()
+        self.init_model()
 
-        view = QTreeView()
-        view.setSelectionBehavior(QAbstractItemView.SelectRows)
-        view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.init_model(self.controller, view)
-
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(view)
-        self.setLayout(self.layout)
-
-    def init_model(self, controller, view):
+    def init_model(self):
         self.model = QStandardItemModel()
         self.model.setHorizontalHeaderLabels(['Table Name'])
         self.model.itemChanged.connect(self.on_item_changed)
-        view.setModel(self.model)
-        view.setUniformRowHeights(True)
+        self.view.setModel(self.model)
+        self.view.setUniformRowHeights(True)
         for table in self.tables:
             for name in table:
                 table_name = str(name)
@@ -136,15 +136,12 @@ class SelectTablePage(QtGui.QWizardPage):
                 root_table_caption = QStandardItem("Columns:")
                 root_table_item.appendRow(root_table_caption)
 
-                table_columns = controller.table_columns_info(table_name)
+                table_columns = self.controller.table_columns_info(table_name)
                 for column in table_columns:
                     child = QStandardItem(str(column))
                     child.setSelectable(False)
                     root_table_caption.appendRow(child)
                 self.model.appendRow(root_table_item)
-
-    def isComplete(self):
-        return self.selected_table is not None
 
     def on_item_changed(self):
         for x in range(0, self.model.rowCount()):

@@ -17,7 +17,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
         self.project_controller = project_controller
 
         self.ctr_frame = QtGui.QWidget()
-        self.layout = QtGui.QVBoxLayout()
+        self.layout = QtGui.QHBoxLayout()
         self.ctr_frame.setLayout(self.layout)
         self.setCentralWidget(self.ctr_frame)
 
@@ -56,7 +56,6 @@ class ProjectMainWindow(QtGui.QMainWindow):
         exit_action.triggered.connect(self.close_application)
         file_menu.addAction(exit_action)
 
-
     def import_db(self):
         wizard = QtGui.QWizard(self)
         wizard.setWindowTitle('Import DB Wizard')
@@ -70,12 +69,15 @@ class ProjectMainWindow(QtGui.QMainWindow):
         db_table_selected = str(select_table_page.selected_table.accessibleText())
         self.project_controller.add_config_data_to_project(db_path, select_table_page.controller.CONTROLLER_TYPE, db_table_selected)
 
+        if self.input_data_view is not None:
+            self.layout.removeWidget(self.input_data_view)
+
         # TODO: cambiar por logica generica independiente del tipo de los datos
         if select_table_page.controller.CONTROLLER_TYPE == 'sqlite':
             self.input_data_view = SQLTableView(self.project_controller)
         else:
             self.input_data_view = CSVTableView(self.project_controller)
-        self.layout.addWidget(self.input_data_view)
+        self.layout.addWidget(self.input_data_view, 5)
 
     def save_project(self, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
