@@ -29,6 +29,10 @@ class ProjectMainWindow(QtGui.QMainWindow):
 
         self.init_ui()
 
+        # TODO: validation error when import existing project
+        if self.project_controller.project.data_config is not None:
+            self.update_view()
+
     def init_ui(self):
         self.init_menu_bar()
         self.showMaximized()
@@ -67,20 +71,23 @@ class ProjectMainWindow(QtGui.QMainWindow):
         wizard.addPage(SelectDbPage(wizard))
         select_table_page = SelectTablePage(wizard)
         wizard.addPage(select_table_page)
-        wizard.exec_()
 
-        db_path = str(select_table_page.selected_db)
-        db_table_selected = str(select_table_page.selected_table.accessibleText())
-        self.project_controller.add_config_data_to_project(db_path, select_table_page.controller.CONTROLLER_TYPE, db_table_selected)
+        if wizard.exec_():
+            db_path = str(select_table_page.selected_db)
+            db_table_selected = str(select_table_page.selected_table.accessibleText())
+            self.project_controller.add_config_data_to_project(db_path, select_table_page.controller.CONTROLLER_TYPE,
+                                                               db_table_selected)
+            self.update_view()
 
+    def update_view(self):
         for i in reversed(range(self.input_data_layout.count())):
             self.input_data_layout.itemAt(i).widget().setParent(None)
-
         table_name_label = QtGui.QLabel()
-        table_name_label.setText("Table: " + db_table_selected + " (Database: " + FileUtils.get_file_name(db_path) + " )")
+        table_name_label.setText(
+            "Table: " + self.project_controller.project.data_config.table + " (Database: " +
+            FileUtils.get_file_name(self.project_controller.project.data_config.location) + " )")
         self.input_data_layout.addWidget(table_name_label)
-
-        ui_factory = UIFactoryHelper.get_factory(select_table_page.controller.CONTROLLER_TYPE)
+        ui_factory = UIFactoryHelper.get_factory(self.project_controller.project.data_config.type)
         ui_factory.create_table_view(self.project_controller)
         self.input_data_layout.addWidget(ui_factory.create_table_view(self.project_controller))
 
