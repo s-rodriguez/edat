@@ -1,5 +1,0 @@
-{
-  "creation_timestamp": "2016-01-18 20:03:26.457783", 
-  "data_config": "{\n  \"attributes\": [\n    {\n      \"basic_type\": \"int\", \n      \"name\": \"Id\", \n      \"privacy_type\": 1, \n      \"transformation_technique\": null\n    }, \n    {\n      \"basic_type\": \"string\", \n      \"name\": \"Name\", \n      \"privacy_type\": 1, \n      \"transformation_technique\": null\n    }, \n    {\n      \"basic_type\": \"int\", \n      \"name\": \"Price\", \n      \"privacy_type\": 1, \n      \"transformation_technique\": null\n    }\n  ], \n  \"data_type\": \"sqlite\", \n  \"location\": \"/home/srodriguez/repos/af/af/utils/test.db\", \n  \"table\": \"Cars\"\n}", 
-  "last_saved_timestamp": "2016-01-18 20:18:01.093438"
-}

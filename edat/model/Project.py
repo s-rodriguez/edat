@@ -8,7 +8,10 @@ from af.utils import (
     get_json_representation,
     load_json_file,
 )
-from edat.exceptions.InfoException import InfoException
+from edat.exceptions import (
+    InfoException,
+    ImportException,
+)
 
 
 class Project:
@@ -41,8 +44,8 @@ class Project:
             if DataConfig.JSON_KEY in json_content.keys():
                 self.data_config = DataConfig(self)
                 self.data_config.load_config(json_content[DataConfig.JSON_KEY])
-        except Exception, e:
-            raise InfoException('The project file could not be imported. \n\t{0}'.format(e))
+        except ImportException, e:
+            raise ImportException('The project file could not be imported. \n\t{0}'.format(e.message))
 
     def data_config_representation(self):
         if self.data_config is not None:

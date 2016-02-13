@@ -6,7 +6,7 @@ from PyQt4.QtGui import *
 
 from af.utils.FileUtils import FileUtils
 from edat.controller.ProjectController import ProjectController
-from edat.exceptions import InfoException
+from edat.exceptions import InfoException, ImportException
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 
 
@@ -45,10 +45,10 @@ class EdatMenu(QDialog):
             try:
                 project_controller.create_project(name, path)
                 self.controller.show_project_main_window(project_controller)
-            except Exception as info_exception:
+            except InfoException, e:
                 error_message = QMessageBox(self)
                 error_message.setWindowTitle("Create Project Error")
-                error_message.setText(info_exception.message)
+                error_message.setText(e.message)
                 error_message.exec_()
 
     def import_project(self):
@@ -59,8 +59,7 @@ class EdatMenu(QDialog):
             try:
                 project_controller.load_project(FileUtils.get_file_name(filename), FileUtils.get_file_directory(filename))
                 self.controller.show_project_main_window(project_controller)
-            # FIXME: info exception dont catch in except
-            except Exception, e:
+            except ImportException, e:
                 error_message = QMessageBox(self)
                 error_message.setWindowTitle("Import Project Error")
                 error_message.setText(e.message)

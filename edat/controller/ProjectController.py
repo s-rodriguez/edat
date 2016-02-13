@@ -1,7 +1,7 @@
 import os
 
 from af.utils import EDAT_PROJECT_EXTENSION, CONFIG_EXTENSION
-from edat.exceptions.InfoException import InfoException
+from edat.exceptions import InfoException, ImportException
 from edat.model.Project import Project
 
 
@@ -54,7 +54,7 @@ class ProjectController:
             self.project.load_project_file(project_file_location)
             return self.project
         else:
-            raise InfoException('There is no edat project on the selected location with that name')
+            raise ImportException('There is no edat project on the selected location with that name')
 
     def add_config_data_to_project(self, location, data_type, table):
         self.project.add_config_data(location, data_type, table)

@@ -42,22 +42,28 @@ class ProjectMainWindow(QtGui.QMainWindow):
 
     def init_menu_bar(self):
         menu_bar = self.menuBar()
+
         file_menu = menu_bar.addMenu('&File')
+
         import_action = file_menu.addAction('Import DB')
         import_action.setShortcut('Ctrl+I')
         import_action.triggered.connect(self.show_import_db_wizard)
+
         save_project_action = file_menu.addAction('Save')
         save_project_action.setShortcut('Ctrl+S')
         save_project_action.setStatusTip('Save Project')
         save_project_action.triggered.connect(self.save_project)
-        save_project_action = file_menu.addAction('Save As')
-        save_project_action.setShortcut('Ctrl+Shift+S')
-        save_project_action.setStatusTip('Save Project As')
-        save_project_action.triggered.connect(self.save_project_as)
-        save_project_action = file_menu.addAction('Export Configuration')
-        save_project_action.setShortcut('Ctrl+E')
-        save_project_action.setStatusTip('Export Configuration')
-        save_project_action.triggered.connect(self.export_configuration)
+
+        save_project_as_action = file_menu.addAction('Save As')
+        save_project_as_action.setShortcut('Ctrl+Shift+S')
+        save_project_as_action.setStatusTip('Save Project As')
+        save_project_as_action.triggered.connect(self.save_project_as)
+
+        export_configuration_action = file_menu.addAction('Export Configuration')
+        export_configuration_action.setShortcut('Ctrl+E')
+        export_configuration_action.setStatusTip('Export Configuration')
+        export_configuration_action.triggered.connect(self.export_configuration)
+
         exit_action = QtGui.QAction('Exit', self)
         exit_action.setShortcut('Ctrl+Q')
         exit_action.setStatusTip('Exit application')
@@ -91,7 +97,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
         ui_factory.create_table_view(self.project_controller)
         self.input_data_layout.addWidget(ui_factory.create_table_view(self.project_controller))
 
-    def save_project(self, name=None, location_path=None):
+    def save_project(self, widget=False, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
 
     def save_project_as(self):
