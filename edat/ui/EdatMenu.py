@@ -6,7 +6,7 @@ from PyQt4.QtGui import *
 
 from af.utils.FileUtils import FileUtils
 from edat.controller.ProjectController import ProjectController
-from edat.exceptions import InfoException, ImportException
+from af.exceptions import InfoException, ImportException
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 
 

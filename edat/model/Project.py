@@ -8,7 +8,7 @@ from af.utils import (
     get_json_representation,
     load_json_file,
 )
-from edat.exceptions import (
+from af.exceptions import (
     InfoException,
     ImportException,
 )

@@ -1,7 +1,7 @@
 import os
 
 from af.utils import EDAT_PROJECT_EXTENSION, CONFIG_EXTENSION
-from edat.exceptions import InfoException, ImportException
+from af.exceptions import InfoException, ImportException
 from edat.model.Project import Project
 
 
