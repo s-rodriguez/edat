@@ -6,8 +6,8 @@ from PyQt4 import QtGui
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
 import edat.utils.ui as utils_ui
-from af.utils.FileUtils import FileUtils
-from UIFactoryHelper import UIFactoryHelper
+from edat.ui.AttributeConfigurationView import AttributeConfigurationView
+from edat.ui.InputDataView import InputDataViewWidget
 
 
 class ProjectMainWindow(QtGui.QMainWindow):
@@ -17,15 +17,14 @@ class ProjectMainWindow(QtGui.QMainWindow):
         self.project_controller = project_controller
 
         self.layout = QtGui.QHBoxLayout()
+        self.ctr_frame = QtGui.QWidget(self)
+        self.ctr_frame.setLayout(self.layout)
+        self.setCentralWidget(self.ctr_frame)
 
         self.input_data_layout = QtGui.QVBoxLayout()
         self.layout.addLayout(self.input_data_layout, 1)
-        self.data_configuration_layout = QtGui.QVBoxLayout()
-        self.layout.addLayout(self.data_configuration_layout, 1)
-
-        self.ctr_frame = QtGui.QWidget()
-        self.ctr_frame.setLayout(self.layout)
-        self.setCentralWidget(self.ctr_frame)
+        self.attribute_configuration_layout = QtGui.QVBoxLayout()
+        self.layout.addLayout(self.attribute_configuration_layout, 1)
 
         self.init_ui()
 
@@ -86,16 +85,20 @@ class ProjectMainWindow(QtGui.QMainWindow):
             self.update_view()
 
     def update_view(self):
+        self.update_input_data_view()
+        self.update_attribute_view()
+
+    def update_attribute_view(self):
+        for i in reversed(range(self.attribute_configuration_layout.count())):
+            self.attribute_configuration_layout.itemAt(i).widget().setParent(None)
+        attribute_configuration_view = AttributeConfigurationView(self.project_controller)
+        self.attribute_configuration_layout.addWidget(attribute_configuration_view)
+
+    def update_input_data_view(self):
         for i in reversed(range(self.input_data_layout.count())):
             self.input_data_layout.itemAt(i).widget().setParent(None)
-        table_name_label = QtGui.QLabel()
-        table_name_label.setText(
-            "Table: " + self.project_controller.project.data_config.table + " (Database: " +
-            FileUtils.get_file_name(self.project_controller.project.data_config.location) + " )")
-        self.input_data_layout.addWidget(table_name_label)
-        ui_factory = UIFactoryHelper.get_factory(self.project_controller.project.data_config.type)
-        ui_factory.create_table_view(self.project_controller)
-        self.input_data_layout.addWidget(ui_factory.create_table_view(self.project_controller))
+        input_data_view = InputDataViewWidget(self.project_controller)
+        self.input_data_layout.addWidget(input_data_view)
 
     def save_project(self, widget=False, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
