@@ -1,6 +1,6 @@
 from PyQt4 import QtGui
 from PyQt4.QtGui import QWidget
-from edat.utils.FileUtils import FileUtils
+from af.utils.FileUtils import FileUtils
 from edat.ui.UIFactoryHelper import UIFactoryHelper
 
 

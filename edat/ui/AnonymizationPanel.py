@@ -14,6 +14,7 @@ class AnonymizationPanel(QtGui.QWidget):
         self.slider.setMaximum(1)
         self.slider.setValue(0)
         self.slider.setTickInterval(1)
+        self.slider.setToolTip("On/Off")
         layout.addRow(self.get_slider_text(), self.slider)
 
         self.status_button = QtGui.QPushButton("status_information")
