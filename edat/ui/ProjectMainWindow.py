@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from PyQt4 import QtGui
+from PyQt4.QtCore import Qt
 
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
 import edat.utils.ui as utils_ui
 from edat.ui.AttributeConfigurationView import AttributeConfigurationView
-from edat.ui.InputDataView import InputDataViewWidget
+from edat.ui.InputDataView import InputDataView
+from edat.ui.PrivacyConfigurationModelView import PrivacyModelConfigurationView
 
 
 class ProjectMainWindow(QtGui.QMainWindow):
@@ -23,8 +25,8 @@ class ProjectMainWindow(QtGui.QMainWindow):
 
         self.input_data_layout = QtGui.QVBoxLayout()
         self.layout.addLayout(self.input_data_layout, 1)
-        self.attribute_configuration_layout = QtGui.QVBoxLayout()
-        self.layout.addLayout(self.attribute_configuration_layout, 1)
+        self.configuration_layout = QtGui.QVBoxLayout()
+        self.layout.addLayout(self.configuration_layout, 1)
 
         self.init_ui()
 
@@ -87,18 +89,23 @@ class ProjectMainWindow(QtGui.QMainWindow):
     def update_view(self):
         self.update_input_data_view()
         self.update_attribute_view()
+        self.update_privacy_model_configuration_view()
 
     def update_attribute_view(self):
-        for i in reversed(range(self.attribute_configuration_layout.count())):
-            self.attribute_configuration_layout.itemAt(i).widget().setParent(None)
+        for i in reversed(range(self.configuration_layout.count())):
+            self.configuration_layout.itemAt(i).widget().setParent(None)
         attribute_configuration_view = AttributeConfigurationView(self.project_controller)
-        self.attribute_configuration_layout.addWidget(attribute_configuration_view)
+        self.configuration_layout.addWidget(attribute_configuration_view)
 
     def update_input_data_view(self):
         for i in reversed(range(self.input_data_layout.count())):
             self.input_data_layout.itemAt(i).widget().setParent(None)
-        input_data_view = InputDataViewWidget(self.project_controller)
-        self.input_data_layout.addWidget(input_data_view)
+        input_data_view = InputDataView(self.project_controller)
+        self.input_data_layout.addWidget(input_data_view, Qt.AlignHCenter)
+
+    def update_privacy_model_configuration_view(self):
+        privacy_model_configuration_view = PrivacyModelConfigurationView()
+        self.configuration_layout.addWidget(privacy_model_configuration_view)
 
     def save_project(self, widget=False, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)

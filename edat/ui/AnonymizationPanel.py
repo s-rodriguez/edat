@@ -1,13 +1,13 @@
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QFormLayout
+from PyQt4.QtGui import QFormLayout, QFrame
 from PyQt4.QtGui import QSlider
 
 
-class AnonymizationPanel(QtGui.QWidget):
+class AnonymizationPanel(QtGui.QFrame):
 
     def __init__(self):
-        super(QtGui.QWidget, self).__init__()
+        super(QtGui.QFrame, self).__init__()
         layout = QFormLayout()
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setMinimum(0)
