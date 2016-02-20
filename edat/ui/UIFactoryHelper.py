@@ -1,4 +1,4 @@
-from edat.ui.SQLUIFactory import SQLUiFactory
+from edat.ui.SQLUiFactory import SQLUiFactory
 from edat.ui.CSVUIFactory import CSVUIFactory
 
 class UIFactoryHelper:
