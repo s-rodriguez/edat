@@ -101,7 +101,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
         for i in reversed(range(self.input_data_layout.count())):
             self.input_data_layout.itemAt(i).widget().setParent(None)
         input_data_view = InputDataView(self.project_controller)
-        self.input_data_layout.addWidget(input_data_view, Qt.AlignHCenter)
+        self.input_data_layout.addWidget(input_data_view)
 
     def update_privacy_model_configuration_view(self):
         privacy_model_configuration_view = PrivacyModelConfigurationView()
