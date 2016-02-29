@@ -2,21 +2,32 @@
 # -*- coding: utf-8 -*-
 
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
+import os
+import webbrowser
 
+from PyQt4.QtGui import QMessageBox, QDialog, QFileDialog
+from af.utils.FileUtils import FileUtils
+
+from edat.controller.ProjectController import ProjectController
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
 import edat.utils.ui as utils_ui
 from edat.ui.AttributeConfigurationView import AttributeConfigurationView
 from edat.ui.InputDataView import InputDataView
 from edat.ui.PrivacyConfigurationModelView import PrivacyModelConfigurationView
+from af.exceptions import InfoException, ImportException
+from edat.ui.EdatMenuBar import EdatMenuBar
 
 
 class ProjectMainWindow(QtGui.QMainWindow):
 
-    def __init__(self, project_controller):
+    def __init__(self, main_ui_controller):
         super(ProjectMainWindow, self).__init__()
-        self.project_controller = project_controller
+
+        self.main_ui_controller = main_ui_controller
+        self.project_controller = self.main_ui_controller.get_project_controller()
+
+        self.menu = EdatMenuBar(self)
 
         self.layout = QtGui.QHBoxLayout()
         self.ctr_frame = QtGui.QWidget(self)
@@ -29,47 +40,45 @@ class ProjectMainWindow(QtGui.QMainWindow):
         self.layout.addLayout(self.configuration_layout, 1)
 
         self.init_ui()
-
-        # TODO: validation error when import existing project
-        if self.project_controller.project.data_config is not None:
-            self.update_view()
+        self.update_view()
 
     def init_ui(self):
-        self.init_menu_bar()
+        self.setMenuBar(self.menu)
         self.showMaximized()
         self.setGeometry(300, 300, 350, 250)
-        self.setWindowTitle(self.project_controller.project.name + ' - ' + self.project_controller.project.path_location)
         self.show()
 
-    def init_menu_bar(self):
-        menu_bar = self.menuBar()
+    def new_project(self):
+        new_project_dialog = EdatNewProjectDialog(self)
+        new_project_dialog.exec_()
 
-        file_menu = menu_bar.addMenu('&File')
+        if new_project_dialog.result() == QDialog.Accepted:
+            self.project_controller = ProjectController()
+            name, path = new_project_dialog.get_project_name()
+            try:
+                self.project_controller.create_project(name, path)
+                self.update_view()
+                self.main_ui_controller.update_edat_config(name, path)
+            except InfoException, e:
+                error_message = QMessageBox(self)
+                error_message.setWindowTitle("Create Project Error")
+                error_message.setText(e.message)
+                error_message.exec_()
 
-        import_action = file_menu.addAction('Import DB')
-        import_action.setShortcut('Ctrl+I')
-        import_action.triggered.connect(self.show_import_db_wizard)
-
-        save_project_action = file_menu.addAction('Save')
-        save_project_action.setShortcut('Ctrl+S')
-        save_project_action.setStatusTip('Save Project')
-        save_project_action.triggered.connect(self.save_project)
-
-        save_project_as_action = file_menu.addAction('Save As')
-        save_project_as_action.setShortcut('Ctrl+Shift+S')
-        save_project_as_action.setStatusTip('Save Project As')
-        save_project_as_action.triggered.connect(self.save_project_as)
-
-        export_configuration_action = file_menu.addAction('Export Configuration')
-        export_configuration_action.setShortcut('Ctrl+E')
-        export_configuration_action.setStatusTip('Export Configuration')
-        export_configuration_action.triggered.connect(self.export_configuration)
-
-        exit_action = QtGui.QAction('Exit', self)
-        exit_action.setShortcut('Ctrl+Q')
-        exit_action.setStatusTip('Exit application')
-        exit_action.triggered.connect(self.close_application)
-        file_menu.addAction(exit_action)
+    def import_project(self):
+        q_file_dialog = QFileDialog()
+        filename = str(q_file_dialog.getOpenFileName(self, 'Import Project', os.getcwd()))
+        if filename:
+            self.project_controller = ProjectController()
+            try:
+                self.project_controller.load_project(FileUtils.get_file_name(filename), FileUtils.get_file_directory(filename))
+                self.update_view()
+                self.main_ui_controller.update_edat_config(self.project_controller.project.name, self.project_controller.project.path_location)
+            except ImportException, e:
+                error_message = QMessageBox(self)
+                error_message.setWindowTitle("Import Project Error")
+                error_message.setText(e.message)
+                error_message.exec_()
 
     def show_import_db_wizard(self):
         wizard = QtGui.QWizard(self)
@@ -87,9 +96,18 @@ class ProjectMainWindow(QtGui.QMainWindow):
             self.update_view()
 
     def update_view(self):
-        self.update_input_data_view()
-        self.update_attribute_view()
-        self.update_privacy_model_configuration_view()
+        self.setWindowTitle(self.build_window_title())
+        self.menu.update_menu()
+        if self.is_project_open() and self.is_db_open():
+            self.update_input_data_view()
+            self.update_attribute_view()
+            self.update_privacy_model_configuration_view()
+
+    def build_window_title(self):
+        title = 'EDAT'
+        if self.is_project_open():
+            title += ' - ' + self.project_controller.project.name + ' - ' + self.project_controller.project.path_location
+        return title
 
     def update_attribute_view(self):
         for i in reversed(range(self.configuration_layout.count())):
@@ -142,4 +160,17 @@ class ProjectMainWindow(QtGui.QMainWindow):
 
         self.close()
 
+    @staticmethod
+    def user_manual():
+        url = "https://github.com/s-rodriguez/edat"
+        webbrowser.open(url, 2)
 
+    def is_project_open(self):
+        return self.project_controller is not None
+
+    def is_db_open(self):
+        return self.project_controller.project.data_config is not None
+
+    def close_project(self):
+        # TODO: remove all views and update edat config file
+        self.project_controller = None

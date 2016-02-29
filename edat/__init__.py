@@ -26,7 +26,7 @@ def main(cls=None, method=None, resource=None):
         debug_actions()
 
     app = QApplication(sys.argv)
-    form = MainUiController()
+    controller = MainUiController()
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
