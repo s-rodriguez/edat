@@ -23,7 +23,6 @@ class MainUiController:
                 error_message.setWindowTitle("Import Project Error")
                 error_message.setText(e.message)
                 error_message.exec_()
-            finally:
                 project_controller = None
 
         return project_controller
