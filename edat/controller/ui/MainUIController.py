@@ -1,6 +1,8 @@
+from PyQt4.QtGui import QMessageBox
 from edat.controller.ProjectController import ProjectController
 from edat.ui.ProjectMainWindow import ProjectMainWindow
 from edat.model.EdatConfig import EdatConfig
+from af.exceptions import ImportException
 
 
 class MainUiController:
@@ -14,10 +16,17 @@ class MainUiController:
         project_controller = None
         if self.edat_config.exists_config_file():
             project_controller = ProjectController()
-            # TODO manejo de error
-            project_controller.load_project(self.edat_config.project, self.edat_config.location)
+            try:
+                project_controller.load_project(self.edat_config.project, self.edat_config.location)
+            except ImportException, e:
+                error_message = QMessageBox()
+                error_message.setWindowTitle("Import Project Error")
+                error_message.setText(e.message)
+                error_message.exec_()
+            finally:
+                project_controller = None
+
         return project_controller
 
     def update_edat_config(self, project=None, location=None):
-        # TODO manejo de errord
         self.edat_config.save(project, location)

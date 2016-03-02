@@ -37,6 +37,8 @@ class EdatConfig:
             json_content = load_json_file(edat_config_file_location)
             self.project = json_content['project']
             self.location = json_content['location']
+        else:
+            self.save()
 
     def exists_config_file(self):
         if (self.location is not None) and (self.project is not None):

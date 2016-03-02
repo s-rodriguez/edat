@@ -71,5 +71,6 @@ class EdatMenuBar(QtGui.QMenuBar):
         self.save_project_action.setEnabled(self.project_main_window.is_project_open())
         self.save_project_as_action.setEnabled(self.project_main_window.is_project_open())
         self.export_configuration_action.setEnabled(self.project_main_window.is_project_open())
+        self.close_project_action.setEnabled(self.project_main_window.is_project_open())
 
 
