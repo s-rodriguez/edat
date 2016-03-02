@@ -25,7 +25,7 @@ class EdatConfig:
 
         return get_json_representation(p_representation)
 
-    def save(self, project, location):
+    def save(self, project=None, location=None):
         self.project = project
         self.location = location
         with open(os.path.join(os.getcwd(), self.EDAT_CONFIG_FILE), 'wb') as temp_file:

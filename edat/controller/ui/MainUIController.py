@@ -18,6 +18,6 @@ class MainUiController:
             project_controller.load_project(self.edat_config.project, self.edat_config.location)
         return project_controller
 
-    def update_edat_config(self, project, location):
-        # TODO manejo de error
+    def update_edat_config(self, project=None, location=None):
+        # TODO manejo de errord
         self.edat_config.save(project, location)

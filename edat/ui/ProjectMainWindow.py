@@ -110,16 +110,26 @@ class ProjectMainWindow(QtGui.QMainWindow):
         return title
 
     def update_attribute_view(self):
-        for i in reversed(range(self.configuration_layout.count())):
-            self.configuration_layout.itemAt(i).widget().setParent(None)
+        self.clean_attribute_view()
         attribute_configuration_view = AttributeConfigurationView(self.project_controller)
         self.configuration_layout.addWidget(attribute_configuration_view)
 
+    def clean_attribute_view(self):
+        for i in reversed(range(self.configuration_layout.count())):
+            self.configuration_layout.itemAt(i).widget().setParent(None)
+
     def update_input_data_view(self):
-        for i in reversed(range(self.input_data_layout.count())):
-            self.input_data_layout.itemAt(i).widget().setParent(None)
+        self.clean_input_data_view()
         input_data_view = InputDataView(self.project_controller)
         self.input_data_layout.addWidget(input_data_view)
+
+    def clean_input_data_view(self):
+        for i in reversed(range(self.input_data_layout.count())):
+            self.input_data_layout.itemAt(i).widget().setParent(None)
+
+    def clean_project_view(self):
+        self.clean_attribute_view()
+        self.clean_input_data_view()
 
     def update_privacy_model_configuration_view(self):
         privacy_model_configuration_view = PrivacyModelConfigurationView()
@@ -172,5 +182,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
         return self.project_controller.project.data_config is not None
 
     def close_project(self):
-        # TODO: remove all views and update edat config file
         self.project_controller = None
+        self.clean_project_view()
+        self.update_view()
+        self.main_ui_controller.update_edat_config()
