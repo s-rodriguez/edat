@@ -161,7 +161,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
                 utils_ui.showMessageAlertBox(parent=self, title="Could not export configuration", message=info_exception.message)
 
     def close_application(self):
-        if self.project_controller.unsaved_changes:
+        if self.project_controller and self.project_controller.unsaved_changes:
             quit_msg = "All unsaved changes will be lost. Do you want to save them?"
             reply = QtGui.QMessageBox.question(self, 'Save last changes',
                                                quit_msg, QtGui.QMessageBox.Save, QtGui.QMessageBox.Cancel)
