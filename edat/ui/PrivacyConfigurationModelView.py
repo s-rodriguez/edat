@@ -5,7 +5,6 @@ from PyQt4.QtGui import QFormLayout, QFrame
 
 from edat.utils.ui.TextUtils import TextUtils
 from af.model.algorithms.AfManager import AfManager
-from af.model.algorithms.Datafly import Datafly
 
 
 class PrivacyModelConfigurationView(QtGui.QFrame):
@@ -27,14 +26,15 @@ class PrivacyModelConfigurationView(QtGui.QFrame):
         form_layout.setLabelAlignment(Qt.AlignCenter)
         form_layout.setVerticalSpacing(30)
 
-        af_manager = AfManager()
+        self.af_manager = AfManager()
 
         self.privacy_model_combo = QtGui.QComboBox()
-        self.privacy_model_combo.addItems(list(af_manager.privacy_models))
+        self.privacy_model_combo.addItems(list(self.af_manager.privacy_models))
+        self.privacy_model_combo.currentIndexChanged['QString'].connect(self.refresh_algorithms)
         form_layout.addRow("Privacy Model: ", self.privacy_model_combo)
 
         self.algorithm_combo = QtGui.QComboBox()
-        algorithms = af_manager.get_algorithms(str(self.privacy_model_combo.currentText()))
+        algorithms = self.af_manager.get_algorithms(str(self.privacy_model_combo.currentText()))
 
         self.algorithm_combo.addItems(list(algorithms))
         form_layout.addRow("Model Algorithm: ", self.algorithm_combo)
@@ -50,3 +50,8 @@ class PrivacyModelConfigurationView(QtGui.QFrame):
 
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         self.setLayout(main_layout)
+
+    def refresh_algorithms(self, model_selected):
+        algorithms = self.af_manager.get_algorithms(model_selected)
+        self.algorithm_combo.clear()
+        self.algorithm_combo.addItems(list(algorithms))
