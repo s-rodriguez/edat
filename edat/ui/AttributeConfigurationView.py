@@ -6,12 +6,14 @@ from PyQt4.QtGui import QFormLayout, QFrame
 from af.controller.data.DataFactory import DataFactory
 from edat.ui.AnonymizationPanel import SuppressionPanel, GeneralizationPanel
 from edat.utils.ui.TextUtils import TextUtils
+from af.model.algorithms.AfManager import AfManager
 
 class AttributeConfigurationView(QtGui.QFrame):
 
     def __init__(self, project_controller):
         super(QFrame, self).__init__()
         data_factory = DataFactory()
+        af_manager = AfManager()
         controller = data_factory.create_controller(project_controller.project.data_config.location, project_controller.project.data_config.type)
 
         main_layout = QtGui.QVBoxLayout()
@@ -30,17 +32,20 @@ class AttributeConfigurationView(QtGui.QFrame):
         self.attributes_combo.addItems(controller.table_columns_info(project_controller.project.data_config.table))
         attr_layout.addRow("Attribute: ", self.attributes_combo)
 
-        # TODO: fill combo
         self.category_combo = QtGui.QComboBox()
+        self.category_combo.addItems(list(af_manager.privacy_types))
         attr_layout.addRow("Category: ", self.category_combo)
 
-        # TODO: fill combo
         self.type_combo = QtGui.QComboBox()
+        self.type_combo.addItems(list(af_manager.data_types))
         attr_layout.addRow("Type: ", self.type_combo)
 
-        # TODO: fill combo
-        self.weight_combo = QtGui.QComboBox()
-        attr_layout.addRow("Weight", self.weight_combo)
+        self.weight_spin_box = QtGui.QSpinBox()
+        self.weight_spin_box.setMaximum(10)
+        self.weight_spin_box.setMinimum(0)
+        self.weight_spin_box.setSingleStep(1)
+        self.weight_spin_box.setValue(5)
+        attr_layout.addRow("Weight", self.weight_spin_box)
 
         self.suppression_panel = SuppressionPanel()
         self.generalization_panel = GeneralizationPanel()
