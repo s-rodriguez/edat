@@ -39,14 +39,12 @@ class PrivacyModelConfigurationView(QtGui.QFrame):
         self.algorithm_combo.addItems(list(algorithms))
         form_layout.addRow("Model Algorithm: ", self.algorithm_combo)
 
+        self.optimization_check_box = QtGui.QCheckBox("Optimize algorithm if possible")
+        form_layout.addRow(self.optimization_check_box)
+
         self.privacy_configuration_frame = QFrame()
         self.privacy_configuration_frame.setLayout(form_layout)
         main_layout.addWidget(self.privacy_configuration_frame, 0, Qt.AlignCenter)
-
-        # TODO: connect button
-        self.add_privacy_model_button = QtGui.QPushButton("Add Privacy Model")
-        self.add_privacy_model_button.setMaximumSize(200, 30)
-        main_layout.addWidget(self.add_privacy_model_button, 0, Qt.AlignCenter)
 
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         self.setLayout(main_layout)

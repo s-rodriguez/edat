@@ -5,6 +5,7 @@ from PyQt4 import QtGui
 import os
 import webbrowser
 
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QMessageBox, QDialog, QFileDialog
 from af.utils.FileUtils import FileUtils
 
@@ -102,6 +103,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
             self.update_input_data_view()
             self.update_attribute_view()
             self.update_privacy_model_configuration_view()
+            self.update_anonymize_view()
 
     def build_window_title(self):
         title = 'EDAT'
@@ -112,7 +114,15 @@ class ProjectMainWindow(QtGui.QMainWindow):
     def update_attribute_view(self):
         self.clean_attribute_view()
         attribute_configuration_view = AttributeConfigurationView(self.project_controller)
-        self.configuration_layout.addWidget(attribute_configuration_view)
+        self.configuration_layout.addWidget(attribute_configuration_view, )
+
+    def update_anonymize_view(self):
+        # TODO: connect button
+        self.anonymize_button = QtGui.QPushButton("Anonymize")
+        self.anonymize_button.setMaximumSize(200, 150)
+        self.anonymize_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
+        self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
+
 
     def clean_attribute_view(self):
         for i in reversed(range(self.configuration_layout.count())):
@@ -133,7 +143,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
 
     def update_privacy_model_configuration_view(self):
         privacy_model_configuration_view = PrivacyModelConfigurationView()
-        self.configuration_layout.addWidget(privacy_model_configuration_view)
+        self.configuration_layout.addWidget(privacy_model_configuration_view, 3)
 
     def save_project(self, widget=False, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
