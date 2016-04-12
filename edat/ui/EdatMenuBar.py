@@ -14,7 +14,7 @@ class EdatMenuBar(QtGui.QMenuBar):
     def init_help_menu(self):
         self.help_menu = self.addMenu('&Help')
         user_manual_action = self.help_menu.addAction('User Manual')
-        user_manual_action.setShortcut('Ctrl+S')
+        user_manual_action.setShortcut('Ctrl+H')
         user_manual_action.triggered.connect(self.project_main_window.user_manual)
 
     def init_file_menu(self):
