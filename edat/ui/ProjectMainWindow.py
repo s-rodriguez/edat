@@ -47,16 +47,8 @@ class ProjectMainWindow(QMainWindow):
 
         self.tab_widget = QTabWidget()
 
-        self.input_and_configuration_tab = QWidget()
-
-        self.layout = QHBoxLayout(self.input_and_configuration_tab)
-
-        self.input_data_layout = QVBoxLayout()
-        self.layout.addLayout(self.input_data_layout, 1)
-        self.configuration_layout = QVBoxLayout()
-        self.layout.addLayout(self.configuration_layout, 1)
-
-        self.tab_widget.addTab(self.input_and_configuration_tab, strings.CONFIGURATION_TAB)
+        self.create_input_and_configuration_tab()
+        self.create_output_and_metrics_tab()
 
         self.mainLayout = QVBoxLayout()
         self.mainLayout.addWidget(self.tab_widget)
@@ -67,6 +59,28 @@ class ProjectMainWindow(QMainWindow):
 
         self.init_ui()
         self.update_view()
+
+    def create_input_and_configuration_tab(self):
+        self.input_and_configuration_tab = QWidget()
+        layout = QHBoxLayout(self.input_and_configuration_tab)
+
+        self.input_data_layout = QVBoxLayout()
+        layout.addLayout(self.input_data_layout, 1)
+        self.configuration_layout = QVBoxLayout()
+        layout.addLayout(self.configuration_layout, 1)
+
+        self.tab_widget.addTab(self.input_and_configuration_tab, strings.CONFIGURATION_TAB)
+
+    def create_output_and_metrics_tab(self):
+        self.output_and_metrics_tab = QWidget()
+        layout = QHBoxLayout(self.output_and_metrics_tab)
+
+        self.output_data_layout = QVBoxLayout()
+        layout.addLayout(self.output_data_layout, 1)
+        self.metrics_layout = QVBoxLayout()
+        layout.addLayout(self.metrics_layout, 1)
+
+        self.tab_widget.addTab(self.output_and_metrics_tab, strings.METRICS_TAB)
 
     def init_ui(self):
         self.setMenuBar(self.menu)

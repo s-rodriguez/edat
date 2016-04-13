@@ -9,6 +9,7 @@ IMPORT_DB_WIZARD = 'Import DB Wizard'
 IMPORT_PROJECT = 'Import Project'
 IMPORT_PROJECT_ERROR = "Import Project Error"
 
+METRICS_TAB = "Anonymization Output and Metrics"
 
 SAVE_CHANGES = 'Save last changes'
 SAVE_PROJECT_AS_ERROR = "Save Project As Error"
