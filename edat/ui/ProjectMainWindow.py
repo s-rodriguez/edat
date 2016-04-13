@@ -156,7 +156,8 @@ class ProjectMainWindow(QMainWindow):
         self.update_anonymize_view()
 
     def update_output_and_metrics_tab(self):
-        pass
+        self.update_output_data_view()
+        self.update_report_metrics_view()
 
     def update_input_data_view(self):
         self.clean_input_data_view()
@@ -186,6 +187,12 @@ class ProjectMainWindow(QMainWindow):
     def clean_attribute_view(self):
         for i in reversed(range(self.configuration_layout.count())):
             self.configuration_layout.itemAt(i).widget().setParent(None)
+
+    def update_output_data_view(self):
+        pass
+
+    def update_report_metrics_view(self):
+        pass
 
     def clean_project_view(self):
         self.clean_attribute_view()
@@ -238,7 +245,8 @@ class ProjectMainWindow(QMainWindow):
         return self.project_controller.project.data_config is not None
 
     def anonymized_db_exists(self):
-        return False
+        data_config = self.project_controller.project.data_config
+        return data_config.anonymized_db_location is not None
 
     def close_project(self):
         self.project_controller = None

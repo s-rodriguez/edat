@@ -43,13 +43,13 @@ class Project:
             self.last_saved_time = datetime.strptime(json_content['last_saved_timestamp'], DATETIME_FORMAT)
             if DataConfig.JSON_KEY in json_content.keys():
                 self.data_config = DataConfig(self)
-                self.data_config.load_config(json_content[DataConfig.JSON_KEY])
+                self.data_config.load_config(json_content[DataConfig.JSON_KEY], from_json=False)
         except ImportException, e:
             raise ImportException('The project file could not be imported. \n\t{0}'.format(e.message))
 
     def data_config_representation(self):
         if self.data_config is not None:
-            return self.data_config.config_representation()
+            return self.data_config.config_representation(json_repr=False)
         return None
 
     def project_file_representation(self, save=False):
