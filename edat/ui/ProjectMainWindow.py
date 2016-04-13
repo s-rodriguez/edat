@@ -139,10 +139,9 @@ class ProjectMainWindow(QMainWindow):
         self.setWindowTitle(self.build_window_title())
         self.menu.update_menu()
         if self.is_project_open() and self.is_db_open():
-            self.update_input_data_view()
-            self.update_attribute_view()
-            self.update_privacy_model_configuration_view()
-            self.update_anonymize_view()
+            self.update_input_and_configuration_tab()
+            if self.anonymized_db_exists():
+                self.update_output_and_metrics_tab()
 
     def build_window_title(self):
         title = strings.WINDOW_TITLE
@@ -150,10 +149,28 @@ class ProjectMainWindow(QMainWindow):
             title += ' - ' + self.project_controller.project.name + ' - ' + self.project_controller.project.path_location
         return title
 
+    def update_input_and_configuration_tab(self):
+        self.update_input_data_view()
+        self.update_attribute_view()
+        self.update_privacy_model_configuration_view()
+        self.update_anonymize_view()
+
+    def update_output_and_metrics_tab(self):
+        pass
+
+    def update_input_data_view(self):
+        self.clean_input_data_view()
+        input_data_view = InputDataView(self.project_controller)
+        self.input_data_layout.addWidget(input_data_view)
+
     def update_attribute_view(self):
         self.clean_attribute_view()
         attribute_configuration_view = AttributeConfigurationView(self.project_controller)
         self.configuration_layout.addWidget(attribute_configuration_view, )
+
+    def update_privacy_model_configuration_view(self):
+        privacy_model_configuration_view = PrivacyModelConfigurationView()
+        self.configuration_layout.addWidget(privacy_model_configuration_view, 3)
 
     def update_anonymize_view(self):
         # TODO: connect button
@@ -162,27 +179,17 @@ class ProjectMainWindow(QMainWindow):
         self.anonymize_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
         self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
 
+    def clean_input_data_view(self):
+        for i in reversed(range(self.input_data_layout.count())):
+            self.input_data_layout.itemAt(i).widget().setParent(None)
 
     def clean_attribute_view(self):
         for i in reversed(range(self.configuration_layout.count())):
             self.configuration_layout.itemAt(i).widget().setParent(None)
 
-    def update_input_data_view(self):
-        self.clean_input_data_view()
-        input_data_view = InputDataView(self.project_controller)
-        self.input_data_layout.addWidget(input_data_view)
-
-    def clean_input_data_view(self):
-        for i in reversed(range(self.input_data_layout.count())):
-            self.input_data_layout.itemAt(i).widget().setParent(None)
-
     def clean_project_view(self):
         self.clean_attribute_view()
         self.clean_input_data_view()
-
-    def update_privacy_model_configuration_view(self):
-        privacy_model_configuration_view = PrivacyModelConfigurationView()
-        self.configuration_layout.addWidget(privacy_model_configuration_view, 3)
 
     def save_project(self, widget=False, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
@@ -229,6 +236,9 @@ class ProjectMainWindow(QMainWindow):
 
     def is_db_open(self):
         return self.project_controller.project.data_config is not None
+
+    def anonymized_db_exists(self):
+        return False
 
     def close_project(self):
         self.project_controller = None
