@@ -5,6 +5,7 @@
 import os
 import webbrowser
 
+from PyQt4.QtWebKit import QWebView
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import (
     QDialog,
@@ -160,12 +161,12 @@ class ProjectMainWindow(QMainWindow):
         self.update_report_metrics_view()
 
     def update_input_data_view(self):
-        self.clean_input_data_view()
+        self.clean_layout(self.input_data_layout)
         input_data_view = InputDataView(self.project_controller)
         self.input_data_layout.addWidget(input_data_view)
 
     def update_attribute_view(self):
-        self.clean_attribute_view()
+        self.clean_layout(self.configuration_layout)
         attribute_configuration_view = AttributeConfigurationView(self.project_controller)
         self.configuration_layout.addWidget(attribute_configuration_view, )
 
@@ -180,23 +181,31 @@ class ProjectMainWindow(QMainWindow):
         self.anonymize_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
         self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
 
-    def clean_input_data_view(self):
-        for i in reversed(range(self.input_data_layout.count())):
-            self.input_data_layout.itemAt(i).widget().setParent(None)
-
-    def clean_attribute_view(self):
-        for i in reversed(range(self.configuration_layout.count())):
-            self.configuration_layout.itemAt(i).widget().setParent(None)
-
     def update_output_data_view(self):
         pass
 
     def update_report_metrics_view(self):
-        pass
+        self.clean_layout(self.metrics_layout)
+        # TODO: look for the report
+        # or data config should save the location, or it should be created again
+        with open('/home/ubuntu/af/reports/my_report.html') as f:
+            report_html = f.read()
+            web_view = QWebView()
+            web_view.setHtml(report_html)
+            self.metrics_layout.addWidget(web_view)
+
+    def clean_layout(self, layout):
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().setParent(None)
 
     def clean_project_view(self):
-        self.clean_attribute_view()
-        self.clean_input_data_view()
+        layouts = (
+            self.input_data_layout,
+            self.configuration_layout,
+            self.metrics_layout
+        )
+        for l in layouts:
+            self.clean_layout(l)
 
     def save_project(self, widget=False, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
