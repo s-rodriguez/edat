@@ -1,26 +1,41 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtGui
+
 import os
 import webbrowser
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox, QDialog, QFileDialog
+from PyQt4.QtGui import (
+    QDialog,
+    QFileDialog,
+    QHBoxLayout,
+    QMainWindow,
+    QMessageBox,
+    QPushButton,
+    QTabWidget,
+    QVBoxLayout,
+    QWidget,
+    QWizard,
+)
+
+from af.exceptions import InfoException, ImportException
 from af.utils.FileUtils import FileUtils
 
 from edat.controller.ProjectController import ProjectController
+from edat.ui.AttributeConfigurationView import AttributeConfigurationView
+from edat.ui.EdatMenuBar import EdatMenuBar
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
-import edat.utils.ui as utils_ui
-from edat.ui.AttributeConfigurationView import AttributeConfigurationView
 from edat.ui.InputDataView import InputDataView
 from edat.ui.PrivacyConfigurationModelView import PrivacyModelConfigurationView
-from af.exceptions import InfoException, ImportException
-from edat.ui.EdatMenuBar import EdatMenuBar
+import edat.utils.ui as utils_ui
 
 
-class ProjectMainWindow(QtGui.QMainWindow):
+from edat.utils import strings
+
+
+class ProjectMainWindow(QMainWindow):
 
     def __init__(self, main_ui_controller):
         super(ProjectMainWindow, self).__init__()
@@ -30,15 +45,25 @@ class ProjectMainWindow(QtGui.QMainWindow):
 
         self.menu = EdatMenuBar(self)
 
-        self.layout = QtGui.QHBoxLayout()
-        self.ctr_frame = QtGui.QWidget(self)
-        self.ctr_frame.setLayout(self.layout)
-        self.setCentralWidget(self.ctr_frame)
+        self.tab_widget = QTabWidget()
 
-        self.input_data_layout = QtGui.QVBoxLayout()
+        self.input_and_configuration_tab = QWidget()
+
+        self.layout = QHBoxLayout(self.input_and_configuration_tab)
+
+        self.input_data_layout = QVBoxLayout()
         self.layout.addLayout(self.input_data_layout, 1)
-        self.configuration_layout = QtGui.QVBoxLayout()
+        self.configuration_layout = QVBoxLayout()
         self.layout.addLayout(self.configuration_layout, 1)
+
+        self.tab_widget.addTab(self.input_and_configuration_tab, strings.CONFIGURATION_TAB)
+
+        self.mainLayout = QVBoxLayout()
+        self.mainLayout.addWidget(self.tab_widget)
+
+        self.ctr_frame = QWidget(self)
+        self.ctr_frame.setLayout(self.mainLayout)
+        self.setCentralWidget(self.ctr_frame)
 
         self.init_ui()
         self.update_view()
@@ -62,13 +87,13 @@ class ProjectMainWindow(QtGui.QMainWindow):
                 self.main_ui_controller.update_edat_config(name, path)
             except InfoException, e:
                 error_message = QMessageBox(self)
-                error_message.setWindowTitle("Create Project Error")
+                error_message.setWindowTitle(strings.CREATE_PROJECT_ERROR)
                 error_message.setText(e.message)
                 error_message.exec_()
 
     def import_project(self):
         q_file_dialog = QFileDialog()
-        filename = str(q_file_dialog.getOpenFileName(self, 'Import Project', os.getcwd()))
+        filename = str(q_file_dialog.getOpenFileName(self, strings.IMPORT_PROJECT, os.getcwd()))
         if filename:
             self.project_controller = ProjectController()
             try:
@@ -77,13 +102,13 @@ class ProjectMainWindow(QtGui.QMainWindow):
                 self.main_ui_controller.update_edat_config(self.project_controller.project.name, self.project_controller.project.path_location)
             except ImportException, e:
                 error_message = QMessageBox(self)
-                error_message.setWindowTitle("Import Project Error")
+                error_message.setWindowTitle(strings.IMPORT_PROJECT_ERROR)
                 error_message.setText(e.message)
                 error_message.exec_()
 
     def show_import_db_wizard(self):
-        wizard = QtGui.QWizard(self)
-        wizard.setWindowTitle('Import DB Wizard')
+        wizard = QWizard(self)
+        wizard.setWindowTitle(strings.IMPORT_DB_WIZARD)
         wizard.addPage(IntroductionPage(wizard))
         wizard.addPage(SelectDbPage(wizard))
         select_table_page = SelectTablePage(wizard)
@@ -106,7 +131,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
             self.update_anonymize_view()
 
     def build_window_title(self):
-        title = 'EDAT'
+        title = strings.WINDOW_TITLE
         if self.is_project_open():
             title += ' - ' + self.project_controller.project.name + ' - ' + self.project_controller.project.path_location
         return title
@@ -118,7 +143,7 @@ class ProjectMainWindow(QtGui.QMainWindow):
 
     def update_anonymize_view(self):
         # TODO: connect button
-        self.anonymize_button = QtGui.QPushButton("Anonymize")
+        self.anonymize_button = QPushButton(strings.ANONYMIZE)
         self.anonymize_button.setMaximumSize(200, 150)
         self.anonymize_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
         self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
@@ -152,30 +177,30 @@ class ProjectMainWindow(QtGui.QMainWindow):
         new_project_dialog = EdatNewProjectDialog(self)
         new_project_dialog.exec_()
 
-        if new_project_dialog.result() == QtGui.QDialog.Accepted:
+        if new_project_dialog.result() == QDialog.Accepted:
             name, path = new_project_dialog.get_project_name()
             try:
                 return self.save_project(name=name, location_path=path)
             except Exception as info_exception:
-                utils_ui.showMessageAlertBox(parent=self, title="Save Project As Error", message=info_exception.message)
+                utils_ui.showMessageAlertBox(parent=self, title=strings.SAVE_PROJECT_AS_ERROR, message=info_exception.message)
 
     def export_configuration(self):
         new_config_dialog = EdatNewProjectDialog(self)
         new_config_dialog.exec_()
 
-        if new_config_dialog.result() == QtGui.QDialog.Accepted:
+        if new_config_dialog.result() == QDialog.Accepted:
             name, path = new_config_dialog.get_project_name()
             try:
                 return self.project_controller.export_configuration(name=name, location_path=path)
             except Exception as info_exception:
-                utils_ui.showMessageAlertBox(parent=self, title="Could not export configuration", message=info_exception.message)
+                utils_ui.showMessageAlertBox(parent=self, title=strings.EXPORT_CONFIG_ERROR, message=info_exception.message)
 
     def close_application(self):
         if self.project_controller and self.project_controller.unsaved_changes:
             quit_msg = "All unsaved changes will be lost. Do you want to save them?"
-            reply = QtGui.QMessageBox.question(self, 'Save last changes',
-                                               quit_msg, QtGui.QMessageBox.Save, QtGui.QMessageBox.Cancel)
-            if reply == QtGui.QMessageBox.Save:
+            reply = QMessageBox.question(self, strings.SAVE_CHANGES,
+                                               quit_msg, QMessageBox.Save, QMessageBox.Cancel)
+            if reply == QMessageBox.Save:
                 self.save_project()
 
         self.close()
