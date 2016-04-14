@@ -27,9 +27,9 @@ from edat.ui.AttributeConfigurationView import AttributeConfigurationView
 from edat.ui.EdatMenuBar import EdatMenuBar
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
-from edat.ui.InputDataView import InputDataView
 from edat.ui.PrivacyConfigurationModelView import PrivacyModelConfigurationView
 from edat.ui.ReportMetricsView import ReportMetricsView
+from edat.ui.TableDataView import TableDataView
 import edat.utils.ui as utils_ui
 
 
@@ -162,7 +162,10 @@ class ProjectMainWindow(QMainWindow):
 
     def update_input_data_view(self):
         self.clean_layout(self.input_data_layout)
-        input_data_view = InputDataView(self.project_controller)
+        db_type = self.project_controller.project.data_config.type
+        table_name = self.project_controller.project.data_config.table
+        db_location = self.project_controller.project.data_config.location
+        input_data_view = TableDataView(db_type, table_name, db_location)
         self.input_data_layout.addWidget(input_data_view)
 
     def update_attribute_view(self):

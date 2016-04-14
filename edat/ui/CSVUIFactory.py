@@ -4,10 +4,9 @@ from edat.utils.ui.TextUtils import TextUtils
 
 class CSVUIFactory(UIFactory):
 
-    def get_table_view_caption(self, controller):
-        table_name_label = TextUtils.get_caption_styled_text("CSV file: " + controller.project.data_config.table + " (Location: " +
-            controller.project.data_config.location + ")")
+    def get_table_view_caption(self, table_name, db_location):
+        table_name_label = "CSV file: {0} (Location: {1})".format(table_name, db_location)
         return table_name_label
 
     def create_table_view(self, controller):
-        return CSVTableView(controller)
+        return CSVTableView(table_name, db_location)

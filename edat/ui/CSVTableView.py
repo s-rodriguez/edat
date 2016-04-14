@@ -5,11 +5,11 @@ from edat.ui.DataTableView import DataTableView
 
 class CSVTableView(DataTableView):
 
-    def __init__(self, project_data_controller):
-        super(CSVTableView, self).__init__(project_data_controller)
+    def __init__(self, table_name, db_location):
+        super(CSVTableView, self).__init__(table_name, db_location)
 
     def create_model(self):
-        csv_controller = CSVController(self.project_data_controller.project.data_config.location)
+        csv_controller = CSVController(self.db_location)
         columns = csv_controller.table_columns_info()
         rows_size = csv_controller.amount_of_rows()
         columns_size = len(columns)

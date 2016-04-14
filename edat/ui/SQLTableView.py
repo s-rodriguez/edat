@@ -6,15 +6,15 @@ class SQLTableView(DataTableView):
 
     DATABASE_NAME = "QSQLITE"
 
-    def __init__(self, project_data_controller):
-        super(SQLTableView, self).__init__(project_data_controller)
+    def __init__(self, table_name, db_location):
+        super(SQLTableView, self).__init__(table_name, db_location)
 
     def create_model(self):
         sql_db = QtSql.QSqlDatabase.addDatabase(self.DATABASE_NAME)
-        sql_db.setDatabaseName(self.project_data_controller.project.data_config.location)
+        sql_db.setDatabaseName(self.db_location)
         # TODO: logear error
         if sql_db.open():
-            model = SqlModel(self.project_data_controller.project.data_config.table, sql_db)
+            model = SqlModel(self.table_name, sql_db)
             return model
 
 class SqlModel(QtSql.QSqlTableModel):
