@@ -5,7 +5,6 @@
 import os
 import webbrowser
 
-from PyQt4.QtWebKit import QWebView
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import (
     QDialog,
@@ -30,6 +29,7 @@ from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
 from edat.ui.InputDataView import InputDataView
 from edat.ui.PrivacyConfigurationModelView import PrivacyModelConfigurationView
+from edat.ui.ReportMetricsView import ReportMetricsView
 import edat.utils.ui as utils_ui
 
 
@@ -186,13 +186,8 @@ class ProjectMainWindow(QMainWindow):
 
     def update_report_metrics_view(self):
         self.clean_layout(self.metrics_layout)
-        # TODO: look for the report
-        # or data config should save the location, or it should be created again
-        with open('/home/ubuntu/af/reports/my_report.html') as f:
-            report_html = f.read()
-            web_view = QWebView()
-            web_view.setHtml(report_html)
-            self.metrics_layout.addWidget(web_view)
+        report_metrics_view = ReportMetricsView(self.project_controller)
+        self.metrics_layout.addWidget(report_metrics_view)
 
     def clean_layout(self, layout):
         for i in reversed(range(layout.count())):
