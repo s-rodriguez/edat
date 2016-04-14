@@ -39,6 +39,9 @@ class PrivacyModelConfigurationView(QtGui.QFrame):
 
     def add_models_and_algorithms(self):
         self.add_privacy_models()
+        spacing_label = QLabel()
+        spacing_label.setFixedWidth(100)
+        self.model_and_algoritms_layout.addWidget(spacing_label)
         self.add_model_algorithms()
 
     def add_privacy_models(self):

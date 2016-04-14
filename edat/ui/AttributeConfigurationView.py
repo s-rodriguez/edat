@@ -33,6 +33,7 @@ class AttributeConfigurationView(QtGui.QFrame):
         attr_layout.setFieldGrowthPolicy(QFormLayout.FieldsStayAtSizeHint)
         attr_layout.setFormAlignment(Qt.AlignCenter)
         attr_layout.setLabelAlignment(Qt.AlignLeft)
+        attr_layout.setVerticalSpacing(20)
 
         self.attributes_combo = QtGui.QComboBox()
         self.load_attributes()
