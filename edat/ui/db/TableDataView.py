@@ -3,7 +3,7 @@ from PyQt4.QtCore import Qt
 
 from PyQt4.QtGui import QFrame
 
-from edat.ui.UIFactoryHelper import UIFactoryHelper
+from edat.ui.db.UIFactoryHelper import UIFactoryHelper
 from edat.utils.ui.TextUtils import TextUtils
 
 

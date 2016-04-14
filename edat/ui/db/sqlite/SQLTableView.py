@@ -1,6 +1,6 @@
 from PyQt4 import QtSql
 
-from edat.ui.DataTableView import DataTableView
+from edat.ui.db.DataTableView import DataTableView
 
 class SQLTableView(DataTableView):
 

@@ -29,7 +29,7 @@ from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
 from edat.ui.ImportDbWizard import IntroductionPage, SelectDbPage, SelectTablePage
 from edat.ui.PrivacyConfigurationModelView import PrivacyModelConfigurationView
 from edat.ui.ReportMetricsView import ReportMetricsView
-from edat.ui.TableDataView import TableDataView
+from edat.ui.db.TableDataView import TableDataView
 import edat.utils.ui as utils_ui
 
 

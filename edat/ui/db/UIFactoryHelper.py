@@ -1,5 +1,5 @@
-from edat.ui.SQLUiFactory import SQLUiFactory
-from edat.ui.CSVUIFactory import CSVUIFactory
+from edat.ui.db.sqlite.SQLUiFactory import SQLUiFactory
+from edat.ui.db.csv.CSVUIFactory import CSVUIFactory
 
 class UIFactoryHelper:
 
