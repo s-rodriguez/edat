@@ -1,6 +1,6 @@
 import abc
 from PyQt4 import QtGui
-from PyQt4.QtGui import QAbstractItemView
+from PyQt4.QtGui import QAbstractItemView, QHeaderView
 
 
 class DataTableView(QtGui.QTableView):
@@ -13,8 +13,15 @@ class DataTableView(QtGui.QTableView):
 
         self.setModel(self.create_model())
         self.setAlternatingRowColors(True)
+        self.setVisible(False)
+
+        #TODO review which of the following to use when sizing the table
+        self.horizontalHeader().setResizeMode(QHeaderView.Stretch)
+
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
+
+        self.setVisible(True)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     @abc.abstractmethod

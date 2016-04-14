@@ -165,7 +165,7 @@ class ProjectMainWindow(QMainWindow):
         db_type = self.project_controller.project.data_config.type
         table_name = self.project_controller.project.data_config.table
         db_location = self.project_controller.project.data_config.location
-        input_data_view = TableDataView(db_type, table_name, db_location)
+        input_data_view = TableDataView(db_type, table_name, db_location, "Input Data")
         self.input_data_layout.addWidget(input_data_view)
 
     def update_attribute_view(self):
@@ -185,12 +185,18 @@ class ProjectMainWindow(QMainWindow):
         self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
 
     def update_output_data_view(self):
-        pass
+        self.clean_layout(self.output_data_layout)
+        data_config = self.project_controller.project.data_config
+        db_type = 'sqlite'
+        table_name = data_config.anonymized_table
+        db_location = data_config.anonymized_db_location
+        output_data_view = TableDataView(db_type, table_name, db_location, "Anonymized Data")
+        self.output_data_layout.addWidget(output_data_view, 1)
 
     def update_report_metrics_view(self):
         self.clean_layout(self.metrics_layout)
         report_metrics_view = ReportMetricsView(self.project_controller)
-        self.metrics_layout.addWidget(report_metrics_view)
+        self.metrics_layout.addWidget(report_metrics_view, 1)
 
     def clean_layout(self, layout):
         for i in reversed(range(layout.count())):
@@ -200,6 +206,7 @@ class ProjectMainWindow(QMainWindow):
         layouts = (
             self.input_data_layout,
             self.configuration_layout,
+            self.output_data_layout,
             self.metrics_layout
         )
         for l in layouts:
