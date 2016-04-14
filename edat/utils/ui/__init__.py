@@ -60,3 +60,8 @@ def add_logic_to_py_file(design_path, file, output_file):
             content = f.read()
             with open(output_file, 'a') as file_output:
                 file_output.write(content)
+
+
+def clean_layout(layout):
+    for i in reversed(range(layout.count())):
+        layout.itemAt(i).widget().setParent(None)

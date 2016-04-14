@@ -161,7 +161,7 @@ class ProjectMainWindow(QMainWindow):
         self.update_report_metrics_view()
 
     def update_input_data_view(self):
-        self.clean_layout(self.input_data_layout)
+        utils_ui.clean_layout(self.input_data_layout)
         db_type = self.project_controller.project.data_config.type
         table_name = self.project_controller.project.data_config.table
         db_location = self.project_controller.project.data_config.location
@@ -169,7 +169,7 @@ class ProjectMainWindow(QMainWindow):
         self.input_data_layout.addWidget(input_data_view)
 
     def update_attribute_view(self):
-        self.clean_layout(self.configuration_layout)
+        utils_ui.clean_layout(self.configuration_layout)
         attribute_configuration_view = AttributeConfigurationView(self.project_controller)
         self.configuration_layout.addWidget(attribute_configuration_view, )
 
@@ -185,7 +185,7 @@ class ProjectMainWindow(QMainWindow):
         self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
 
     def update_output_data_view(self):
-        self.clean_layout(self.output_data_layout)
+        utils_ui.clean_layout(self.output_data_layout)
         data_config = self.project_controller.project.data_config
         db_type = 'sqlite'
         table_name = data_config.anonymized_table
@@ -194,13 +194,9 @@ class ProjectMainWindow(QMainWindow):
         self.output_data_layout.addWidget(output_data_view, 1)
 
     def update_report_metrics_view(self):
-        self.clean_layout(self.metrics_layout)
+        utils_ui.clean_layout(self.metrics_layout)
         report_metrics_view = ReportMetricsView(self.project_controller)
         self.metrics_layout.addWidget(report_metrics_view, 1)
-
-    def clean_layout(self, layout):
-        for i in reversed(range(layout.count())):
-            layout.itemAt(i).widget().setParent(None)
 
     def clean_project_view(self):
         layouts = (
@@ -210,7 +206,7 @@ class ProjectMainWindow(QMainWindow):
             self.metrics_layout
         )
         for l in layouts:
-            self.clean_layout(l)
+            utils_ui.clean_layout(l)
 
     def save_project(self, widget=False, name=None, location_path=None):
         self.project_controller.save_project(name, location_path)
