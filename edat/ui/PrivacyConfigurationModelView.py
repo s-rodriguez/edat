@@ -91,13 +91,3 @@ class PrivacyModelConfigurationView(QtGui.QFrame):
     def add_extra_options(self):
         self.optimization_check_box = QtGui.QCheckBox("Optimize algorithm if possible")
         self.extra_options_layout.addRow(self.optimization_check_box)
-
-    @staticmethod
-    def get_form_layout(vertical_spacing=20):
-        form_layout = QtGui.QFormLayout()
-        form_layout.setRowWrapPolicy(QFormLayout.DontWrapRows)
-        form_layout.setFieldGrowthPolicy(QFormLayout.FieldsStayAtSizeHint)
-        form_layout.setFormAlignment(Qt.AlignLeft)
-        form_layout.setLabelAlignment(Qt.AlignCenter)
-        form_layout.setVerticalSpacing(vertical_spacing)
-        return form_layout
