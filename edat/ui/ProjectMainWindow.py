@@ -20,6 +20,7 @@ from PyQt4.QtGui import (
 )
 
 from af.exceptions import InfoException, ImportException
+from af.model.algorithms.AfManager import AfManager
 from af.utils.FileUtils import FileUtils
 
 from edat.controller.ProjectController import ProjectController
@@ -157,8 +158,11 @@ class ProjectMainWindow(QMainWindow):
         self.update_anonymize_view()
 
     def update_output_and_metrics_tab(self):
-        self.update_output_data_view()
-        self.update_report_metrics_view()
+        try:
+            self.update_output_data_view()
+            self.update_report_metrics_view()
+        except Exception, e:
+            pass
 
     def update_input_data_view(self):
         utils_ui.clean_layout(self.input_data_layout)
@@ -170,16 +174,16 @@ class ProjectMainWindow(QMainWindow):
 
     def update_attribute_view(self):
         utils_ui.clean_layout(self.configuration_layout)
-        attribute_configuration_view = AttributeConfigurationView(self.project_controller)
-        self.configuration_layout.addWidget(attribute_configuration_view, )
+        self.attribute_configuration_view = AttributeConfigurationView(self.project_controller)
+        self.configuration_layout.addWidget(self.attribute_configuration_view, )
 
     def update_privacy_model_configuration_view(self):
-        privacy_model_configuration_view = PrivacyModelConfigurationView()
-        self.configuration_layout.addWidget(privacy_model_configuration_view, 3)
+        self.privacy_model_configuration_view = PrivacyModelConfigurationView()
+        self.configuration_layout.addWidget(self.privacy_model_configuration_view, 3)
 
     def update_anonymize_view(self):
-        # TODO: connect button
         self.anonymize_button = QPushButton(strings.ANONYMIZE)
+        self.anonymize_button.clicked.connect(self.handleAnonymizedButton)
         self.anonymize_button.setMaximumSize(200, 150)
         self.anonymize_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
         self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
@@ -263,3 +267,17 @@ class ProjectMainWindow(QMainWindow):
         self.clean_project_view()
         self.update_view()
         self.main_ui_controller.update_edat_config()
+
+    def handleAnonymizedButton(self, widget=None):
+        af_manager = AfManager()
+        data_config = self.project_controller.project.data_config
+
+        algorithm_name, algorithm_arguments, optimized_processing = self.privacy_model_configuration_view.get_config()
+
+        algorithm_instance = af_manager.get_algorithm_instance(data_config,
+                                                               algorithm_name,
+                                                               algorithm_arguments,
+                                                               optimized_processing
+                                                               )
+
+        algorithm_instance.anonymize()

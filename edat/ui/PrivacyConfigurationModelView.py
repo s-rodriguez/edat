@@ -94,3 +94,15 @@ class PrivacyModelConfigurationView(QtGui.QFrame):
     def add_extra_options(self):
         self.optimization_check_box = QtGui.QCheckBox("Optimize algorithm if possible")
         self.extra_options_layout.addRow(self.optimization_check_box)
+
+    def get_config(self):
+        algorithm_name = self.algorithm_combo.currentText()
+        optimized_processing = self.optimization_check_box.isChecked()
+
+        algorithm_parameters = {}
+        for i in range(0, self.algorithm_arguments_layout.count(), 2):
+            parameter_name = str(self.algorithm_arguments_layout.itemAt(i).widget().text())
+            parameter_value = str(self.algorithm_arguments_layout.itemAt(i+1).widget().text())
+            algorithm_parameters[parameter_name] = parameter_value
+
+        return algorithm_name, algorithm_parameters, optimized_processing
