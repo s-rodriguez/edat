@@ -22,8 +22,9 @@ def debug_actions():
 
 
 def main(cls=None, method=None, resource=None):
-    if STATUS == 'debug':
-        debug_actions()
+    # Activate when necessary
+    #if STATUS == 'debug':
+    #    debug_actions()
 
     app = QApplication(sys.argv)
     controller = MainUiController()

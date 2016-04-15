@@ -267,21 +267,23 @@ class ProjectMainWindow(QMainWindow):
         self.main_ui_controller.update_edat_config()
 
     def handle_anonymize_button(self, widget=None):
-        self.anonymize_frame_log_view.anonymize_button.setEnabled(False)
-        self.tab_widget.setTabEnabled(1, False)
-        QApplication.processEvents()
+        self.anonymization_views_enable(False)
 
         algorithm_config = self.privacy_model_configuration_view.get_config()
         self.anonymization_thread = AnonymizationThread(self.project_controller, algorithm_config)
-        self.connect(self.anonymization_thread, SIGNAL("finished()"), self.anonymization_finished)
+        self.connect(self.anonymization_thread, SIGNAL("finished()"), self.anonymization_views_enable)
         self.anonymization_thread.start()
 
-    def anonymization_finished(self):
-        QMessageBox.information(self, "Done!", "Done Anonymizing!")
-        self.anonymize_frame_log_view.anonymize_button.setEnabled(True)
-        self.update_output_and_metrics_tab()
-        self.tab_widget.setTabEnabled(1, True)
+    def anonymization_views_enable(self, enable=True):
+        if enable:
+            self.anonymize_frame_log_view.anonymize_button.setEnabled(True)
+            self.update_output_and_metrics_tab()
+            self.tab_widget.setTabEnabled(1, True)
+        else:
+            self.anonymize_frame_log_view.anonymize_button.setEnabled(False)
+            self.tab_widget.setTabEnabled(1, False)
 
+        QApplication.processEvents()
 
 
 class AnonymizationThread(QThread):
