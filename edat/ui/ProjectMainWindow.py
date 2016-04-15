@@ -162,6 +162,7 @@ class ProjectMainWindow(QMainWindow):
             self.update_output_data_view()
             self.update_report_metrics_view()
         except Exception, e:
+            self.tab_widget.setTabEnabled(False, 1)
             pass
 
     def update_input_data_view(self):
@@ -270,6 +271,7 @@ class ProjectMainWindow(QMainWindow):
 
     def handle_anonymize_button(self, widget=None):
         self.anonymize_button.setEnabled(False)
+        self.tab_widget.setTabEnabled(1, False)
         QApplication.processEvents()
 
         algorithm_config = self.privacy_model_configuration_view.get_config()
@@ -281,6 +283,7 @@ class ProjectMainWindow(QMainWindow):
         QMessageBox.information(self, "Done!", "Done Anonymizing!")
         self.update_output_and_metrics_tab()
         self.anonymize_button.setEnabled(True)
+        self.tab_widget.setTabEnabled(1, True)
 
 
 
