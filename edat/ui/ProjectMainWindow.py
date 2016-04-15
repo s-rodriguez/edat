@@ -5,8 +5,9 @@
 import os
 import webbrowser
 
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QThread, SIGNAL
 from PyQt4.QtGui import (
+    QApplication,
     QDialog,
     QFileDialog,
     QHBoxLayout,
@@ -20,7 +21,6 @@ from PyQt4.QtGui import (
 )
 
 from af.exceptions import InfoException, ImportException
-from af.model.algorithms.AfManager import AfManager
 from af.utils.FileUtils import FileUtils
 
 from edat.controller.ProjectController import ProjectController
@@ -269,16 +269,30 @@ class ProjectMainWindow(QMainWindow):
         self.main_ui_controller.update_edat_config()
 
     def handle_anonymize_button(self, widget=None):
-        af_manager = AfManager()
-        data_config = self.project_controller.project.data_config
+        self.anonymize_button.setEnabled(False)
+        QApplication.processEvents()
 
-        algorithm_name, algorithm_arguments, optimized_processing = self.privacy_model_configuration_view.get_config()
+        algorithm_config = self.privacy_model_configuration_view.get_config()
+        self.anonymization_thread = AnonymizationThread(self.project_controller, algorithm_config)
+        self.connect(self.anonymization_thread, SIGNAL("finished()"), self.anonymization_finished)
+        self.anonymization_thread.start()
 
-        algorithm_instance = af_manager.get_algorithm_instance(data_config,
-                                                               algorithm_name,
-                                                               algorithm_arguments,
-                                                               optimized_processing
-                                                               )
-
-        algorithm_instance.anonymize()
+    def anonymization_finished(self):
+        QMessageBox.information(self, "Done!", "Done Anonymizing!")
         self.update_output_and_metrics_tab()
+        self.anonymize_button.setEnabled(True)
+
+
+
+class AnonymizationThread(QThread):
+
+    def __init__(self, project_controller, algorithm_config):
+        QThread.__init__(self)
+        self.project_controller = project_controller
+        self.algorithm_config = algorithm_config
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        self.project_controller.anonymize_data(*self.algorithm_config)

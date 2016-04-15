@@ -1,5 +1,6 @@
 import os
 
+from af.model.algorithms.AfManager import AfManager
 from af.utils import EDAT_PROJECT_EXTENSION, CONFIG_EXTENSION
 from af.exceptions import InfoException, ImportException
 from edat.model.Project import Project
@@ -73,13 +74,13 @@ class ProjectController:
         with open(config_location, 'w+') as config_file:
             config_file.write(data_config_representation)
 
+    def anonymize_data(self, algorithm_name, algorithm_arguments, optimized_processing):
+        af_manager = AfManager()
+        data_config = self.project.data_config
+        algorithm_instance = af_manager.get_algorithm_instance(data_config,
+                                                               algorithm_name,
+                                                               algorithm_arguments,
+                                                               optimized_processing
+                                                               )
 
-# TODO: This is just to test this, it should be removed afterwards!
-if __name__ == "__main__":
-    #pc = ProjectController()
-    #pc.create_project('project_test', '/home/srodriguez/repos')
-    #pc.load_project('project_test', '/home/srodriguez/repos')
-    #pc.add_config_data_to_project('a/directory/location', 'sqlite', 'Cars')
-    #pc.save_project()
-    #print pc.project.project_file_representation()
-    print 'ProjectController Main function -> Delete'
+        return algorithm_instance.anonymize()
