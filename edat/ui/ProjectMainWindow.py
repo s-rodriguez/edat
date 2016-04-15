@@ -183,7 +183,7 @@ class ProjectMainWindow(QMainWindow):
 
     def update_anonymize_view(self):
         self.anonymize_button = QPushButton(strings.ANONYMIZE)
-        self.anonymize_button.clicked.connect(self.handleAnonymizedButton)
+        self.anonymize_button.clicked.connect(self.handle_anonymize_button)
         self.anonymize_button.setMaximumSize(200, 150)
         self.anonymize_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
         self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
@@ -268,7 +268,7 @@ class ProjectMainWindow(QMainWindow):
         self.update_view()
         self.main_ui_controller.update_edat_config()
 
-    def handleAnonymizedButton(self, widget=None):
+    def handle_anonymize_button(self, widget=None):
         af_manager = AfManager()
         data_config = self.project_controller.project.data_config
 
@@ -281,3 +281,4 @@ class ProjectMainWindow(QMainWindow):
                                                                )
 
         algorithm_instance.anonymize()
+        self.update_output_and_metrics_tab()
