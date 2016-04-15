@@ -1,5 +1,7 @@
 import logging
+import sys
 
+from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4.QtGui import QFrame, QPushButton, QHBoxLayout, QPlainTextEdit, QApplication
 
 from edat.utils import strings
@@ -27,23 +29,39 @@ class AnonymizeFrameLogView(QFrame):
         self.main_layout.addWidget(self.anonymize_button)
 
     def add_log_panel(self):
-        self.log_panel = QPlainTextEditLogger(self)
-        self.main_layout.addWidget(self.log_panel.widget, 3)
+        self.log_panel = QPlainTextEdit()
+        self.log_panel.setReadOnly(True)
+        self.main_layout.addWidget(self.log_panel, 3)
+
+        self.logging_handler = QPlainTextEditLogger()
 
         logging.getLogger().setLevel(logging.INFO)
-        logging.getLogger().addHandler(self.log_panel)
+        logging.getLogger().addHandler(self.logging_handler)
+
+        XStream.stdout().messageWritten.connect(self.log_panel.appendPlainText)
 
 
 class QPlainTextEditLogger(logging.Handler):
-    def __init__(self, parent):
+
+    def __init__(self):
         logging.Handler.__init__(self)
         self.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
-        self.widget = QPlainTextEdit(parent)
-        self.widget.setReadOnly(True)
-
     def emit(self, record):
         msg = self.format(record)
-        self.widget.appendPlainText(msg)
-        self.widget.verticalScrollBar().setValue(self.widget.verticalScrollBar().maximum())
-        QApplication.processEvents()
+        XStream.stdout().write(msg)
+        
+
+class XStream(QObject):
+    _stdout = None
+    messageWritten = pyqtSignal(str)
+
+    @staticmethod
+    def stdout():
+        if ( not XStream._stdout ):
+            XStream._stdout = XStream()
+        return XStream._stdout
+
+    def write( self, msg ):
+        if ( not self.signalsBlocked() ):
+            self.messageWritten.emit(msg)

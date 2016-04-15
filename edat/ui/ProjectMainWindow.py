@@ -282,6 +282,7 @@ class ProjectMainWindow(QMainWindow):
         else:
             self.anonymize_frame_log_view.anonymize_button.setEnabled(False)
             self.tab_widget.setTabEnabled(1, False)
+            self.anonymize_frame_log_view.log_panel.setPlainText('')
 
         QApplication.processEvents()
 
