@@ -13,7 +13,6 @@ from PyQt4.QtGui import (
     QHBoxLayout,
     QMainWindow,
     QMessageBox,
-    QPushButton,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -24,6 +23,7 @@ from af.exceptions import InfoException, ImportException
 from af.utils.FileUtils import FileUtils
 
 from edat.controller.ProjectController import ProjectController
+from edat.ui.AnonymizeFrameLogView import AnonymizeFrameLogView
 from edat.ui.AttributeConfigurationView import AttributeConfigurationView
 from edat.ui.EdatMenuBar import EdatMenuBar
 from edat.ui.EdatNewProjectDialog import EdatNewProjectDialog
@@ -176,18 +176,15 @@ class ProjectMainWindow(QMainWindow):
     def update_attribute_view(self):
         utils_ui.clean_layout(self.configuration_layout)
         self.attribute_configuration_view = AttributeConfigurationView(self.project_controller)
-        self.configuration_layout.addWidget(self.attribute_configuration_view, )
+        self.configuration_layout.addWidget(self.attribute_configuration_view)
 
     def update_privacy_model_configuration_view(self):
         self.privacy_model_configuration_view = PrivacyModelConfigurationView()
-        self.configuration_layout.addWidget(self.privacy_model_configuration_view, 3)
+        self.configuration_layout.addWidget(self.privacy_model_configuration_view)
 
     def update_anonymize_view(self):
-        self.anonymize_button = QPushButton(strings.ANONYMIZE)
-        self.anonymize_button.clicked.connect(self.handle_anonymize_button)
-        self.anonymize_button.setMaximumSize(200, 150)
-        self.anonymize_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
-        self.configuration_layout.addWidget(self.anonymize_button, 1, Qt.AlignCenter)
+        self.anonymize_frame_log_view = AnonymizeFrameLogView(self.handle_anonymize_button)
+        self.configuration_layout.addWidget(self.anonymize_frame_log_view)
 
     def update_output_data_view(self):
         utils_ui.clean_layout(self.output_data_layout)
@@ -270,7 +267,7 @@ class ProjectMainWindow(QMainWindow):
         self.main_ui_controller.update_edat_config()
 
     def handle_anonymize_button(self, widget=None):
-        self.anonymize_button.setEnabled(False)
+        self.anonymize_frame_log_view.anonymize_button.setEnabled(False)
         self.tab_widget.setTabEnabled(1, False)
         QApplication.processEvents()
 
@@ -281,8 +278,8 @@ class ProjectMainWindow(QMainWindow):
 
     def anonymization_finished(self):
         QMessageBox.information(self, "Done!", "Done Anonymizing!")
+        self.anonymize_frame_log_view.anonymize_button.setEnabled(True)
         self.update_output_and_metrics_tab()
-        self.anonymize_button.setEnabled(True)
         self.tab_widget.setTabEnabled(1, True)
 
 
