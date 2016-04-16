@@ -5,7 +5,12 @@
 import os
 import webbrowser
 
-from PyQt4.QtCore import Qt, QThread, SIGNAL
+from PyQt4.QtCore import (
+    Qt,
+    QThread,
+    pyqtSignal,
+)
+
 from PyQt4.QtGui import (
     QApplication,
     QDialog,
@@ -271,8 +276,28 @@ class ProjectMainWindow(QMainWindow):
 
         algorithm_config = self.privacy_model_configuration_view.get_config()
         self.anonymization_thread = AnonymizationThread(self.project_controller, algorithm_config)
-        self.connect(self.anonymization_thread, SIGNAL("finished()"), self.anonymization_views_enable)
+        self.anonymization_thread.anonymization_finished.connect(self.anonymization_finished_update)
+
         self.anonymization_thread.start()
+
+    def anonymization_finished_update(self, msg):
+        if msg ==  '':
+            title = 'Finished'
+            text_message = 'Anonymization Finished!'
+            icon = QMessageBox.Information
+            detailed_text = None
+        else:
+            title = 'Problem Occured'
+            text_message = 'Something went wrong when trying to anonymize'
+            icon = QMessageBox.Critical
+            detailed_text = msg
+
+        msg_box = utils_ui.create_message_box(title, text_message, icon)
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.setDetailedText(msg)
+        msg_box.exec_()
+
+        self.anonymization_views_enable()
 
     def anonymization_views_enable(self, enable=True):
         if enable:
@@ -289,6 +314,8 @@ class ProjectMainWindow(QMainWindow):
 
 class AnonymizationThread(QThread):
 
+    anonymization_finished = pyqtSignal(str)
+
     def __init__(self, project_controller, algorithm_config):
         QThread.__init__(self)
         self.project_controller = project_controller
@@ -298,4 +325,5 @@ class AnonymizationThread(QThread):
         self.wait()
 
     def run(self):
-        self.project_controller.anonymize_data(*self.algorithm_config)
+        anonymization_result = self.project_controller.anonymize_data(*self.algorithm_config)
+        self.anonymization_finished.emit(anonymization_result if anonymization_result is not None else '')

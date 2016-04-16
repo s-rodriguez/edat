@@ -4,7 +4,7 @@ from PyQt4.QtGui import (
     QFrame,
     QPushButton,
     QHBoxLayout,
-    QPlainTextEdit,
+    QTextEdit,
     QApplication,
 )
 
@@ -33,7 +33,7 @@ class AnonymizeFrameLogView(QFrame):
         self.main_layout.addWidget(self.anonymize_button)
 
     def add_log_panel(self):
-        self.log_panel = QPlainTextEdit()
+        self.log_panel = QTextEdit()
         self.log_panel.setReadOnly(True)
         self.main_layout.addWidget(self.log_panel, 3)
 
@@ -42,7 +42,4 @@ class AnonymizeFrameLogView(QFrame):
         logging.getLogger().setLevel(logging.INFO)
         logging.getLogger().addHandler(self.logging_handler)
 
-        EdatLoggingHandler.XStream.stdout().messageWritten.connect(self.update_log_panel)
-
-    def update_log_panel(self, msg):
-        self.log_panel.appendPlainText(msg)
+        EdatLoggingHandler.XStream.stdout().messageWritten.connect(self.log_panel.append)

@@ -19,6 +19,14 @@ def showMessageAlertBox(parent, title, message):
     error_message.exec_()
 
 
+def create_message_box(title, text_message, icon):
+    msg_box = QtGui.QMessageBox()
+    msg_box.setIcon(icon)
+    msg_box.setWindowTitle(title)
+    msg_box.setText(text_message)
+    return msg_box
+
+
 def transform_ui_files_into_py():
     print "[+] Transforming ui files into py"
     from edat import get_edat_directory
