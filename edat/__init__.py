@@ -21,6 +21,11 @@ def debug_actions():
     transform_ui_files_into_py()
 
 
+def create_project():
+    from edat.utils.tests import create_full_project
+    create_full_project()
+
+
 def main(cls=None, method=None, resource=None):
     # Activate when necessary
     #if STATUS == 'debug':

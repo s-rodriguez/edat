@@ -28,7 +28,8 @@ setup(
     # Para futuros entry points
     entry_points={
        'console_scripts': [
-           'edat = edat:main'
+           'edat = edat:main',
+           'edat_project = edat:create_project'
        ]
     },
 )
