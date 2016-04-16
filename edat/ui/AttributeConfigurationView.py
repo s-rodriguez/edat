@@ -95,6 +95,7 @@ class AttributeConfigurationView(QtGui.QFrame):
 
                 self.block_objects_signals(combos, False)
 
+                self.enable_anonymization_panels(att)
                 break
 
     def save_attribute_info(self, text):

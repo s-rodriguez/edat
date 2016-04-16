@@ -64,7 +64,7 @@ class GeneralizationPanel(AnonymizationPanel):
         return "Generalize"
 
     def on_push_button_clicked(self):
-        self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute())
+        self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute(), self)
 
 
 

@@ -1,12 +1,14 @@
 from PyQt4 import QtGui
 
+from PyQt4.QtGui import QTableWidgetItem
+
 from af.controller.data.SqliteController import SqliteController
 
 
 class HierarchyView(QtGui.QDialog):
 
-    def __init__(self, project_controller, attribute):
-        super(QtGui.QDialog, self).__init__()
+    def __init__(self, project_controller, attribute, parent=None):
+        super(QtGui.QDialog, self).__init__(parent)
 
         self.project_controller = project_controller
         self.attribute = attribute
@@ -22,17 +24,40 @@ class HierarchyView(QtGui.QDialog):
         layout = QtGui.QHBoxLayout()
         self.setLayout(layout)
 
-        self.current_level_view = QtGui.QListWidget()
-        self.current_level_view.addItems(attribute_values)
+        self.table_view = QtGui.QTableWidget()
+        self.table_view.setColumnCount(2)
+        self.table_view.setRowCount(len(attribute_values))
+        self.fill_values(attribute_values)
+        self.build_columns_headers()
 
-        self.next_level_view = QtGui.QListWidget()
-
-        layout.addWidget(self.current_level_view)
-        layout.addWidget(self.next_level_view)
+        layout.addWidget(self.table_view)
 
         self.setWindowTitle(self.attribute.name + ' Hierarchy')
+        self.table_view.resizeColumnsToContents()
+        self.table_view.resizeRowsToContents()
+
+        self.setMinimumSize(600, 600)
 
         self.show()
+
+    def fill_values(self, attribute_values):
+
+        for n_row in range(0, len(attribute_values)):
+            for n_col in range(0, self.table_view.colorCount()):
+                if n_col == 0:
+                    widget = QtGui.QLabel()
+                    self.table_view.setItem(n_row, n_col, QTableWidgetItem(attribute_values[n_row]))
+                else:
+                    widget = QtGui.QComboBox()
+                self.table_view.setCellWidget(n_row, n_col, widget)
+
+    def build_columns_headers(self):
+        for n_col in range(0, self.table_view.columnCount()):
+            if n_col == 0:
+                column_name = 'Leaf level'
+            else:
+                column_name = 'Level ' + str(n_col)
+            self.table_view.setHorizontalHeaderItem(n_col, QtGui.QTableWidgetItem(column_name))
 
 
 
