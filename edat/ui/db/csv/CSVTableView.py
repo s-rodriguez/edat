@@ -1,7 +1,7 @@
 from PyQt4.QtGui import QStandardItemModel, QStandardItem
 from af.controller.data.CSVController import CSVController
 
-from edat.ui.db.DataTableView import DataTableView
+from edat.ui.db.AbstractDataTableView import DataTableView
 
 class CSVTableView(DataTableView):
 

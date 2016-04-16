@@ -57,8 +57,8 @@ class AttributeConfigurationView(QtGui.QFrame):
         attr_layout.addRow("Weight", self.weight_spin_box)
         self.weight_spin_box.valueChanged.connect(self.save_attribute_info)
 
-        self.suppression_panel = SuppressionPanel()
-        self.generalization_panel = GeneralizationPanel()
+        self.suppression_panel = SuppressionPanel(self.project_controller, self)
+        self.generalization_panel = GeneralizationPanel(self.project_controller, self)
 
         attr_layout.addRow(self.suppression_panel, self.generalization_panel)
 
@@ -113,3 +113,10 @@ class AttributeConfigurationView(QtGui.QFrame):
     def block_objects_signals(objects_list, block=True):
         for ob in objects_list:
             ob.blockSignals(block)
+
+    def get_current_attribute(self):
+        selected_attribute = str(self.attributes_combo.currentText())
+        for att in self.data_config.attributes_list:
+            if att.name == selected_attribute:
+                return att
+

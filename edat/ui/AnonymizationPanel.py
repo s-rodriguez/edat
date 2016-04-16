@@ -1,13 +1,20 @@
 from PyQt4 import QtGui
+
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QFormLayout, QFrame
+from PyQt4.QtGui import QFormLayout
 from PyQt4.QtGui import QSlider
+
+from edat.ui.HierarchyView import HierarchyView
 
 
 class AnonymizationPanel(QtGui.QFrame):
 
-    def __init__(self):
+    def __init__(self, project_controller, attribute_view):
         super(QtGui.QFrame, self).__init__()
+
+        self.attribute_view = attribute_view
+        self.project_controller = project_controller
+
         layout = QFormLayout()
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setMinimum(0)
@@ -21,9 +28,13 @@ class AnonymizationPanel(QtGui.QFrame):
         self.status_button.setFlat(True)
         self.status_button.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.status_button.setStyleSheet('QPushButton {color: blue; text-decoration: underline;}')
-
         layout.addRow("Status:", self.status_button)
-        layout.addRow(QtGui.QPushButton(self.get_push_button_text()))
+
+        self.action_button = QtGui.QPushButton(self.get_push_button_text())
+        self.action_button.clicked.connect(self.on_push_button_clicked)
+
+        layout.addRow(self.action_button)
+
         self.setLayout(layout)
 
     def get_slider_text(self):
@@ -31,6 +42,10 @@ class AnonymizationPanel(QtGui.QFrame):
 
     def get_push_button_text(self):
         pass
+
+    def on_push_button_clicked(self):
+        pass
+
 
 class SuppressionPanel(AnonymizationPanel):
 
@@ -48,4 +63,8 @@ class GeneralizationPanel(AnonymizationPanel):
 
     def get_push_button_text(self):
         return "Generalize"
+
+    def on_push_button_clicked(self):
+        self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute())
+
 
