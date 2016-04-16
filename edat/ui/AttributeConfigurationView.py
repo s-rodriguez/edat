@@ -95,7 +95,6 @@ class AttributeConfigurationView(QtGui.QFrame):
 
                 self.block_objects_signals(combos, False)
 
-                self.enable_anonymization_panels(att.is_qi_attribute())
                 break
 
     def save_attribute_info(self, text):
@@ -109,7 +108,9 @@ class AttributeConfigurationView(QtGui.QFrame):
                 att.basic_type = basic_type
                 att.privacy_type = privacy_category
                 att.weight = weight
+                self.enable_anonymization_panels(att)
                 break
+
 
     @staticmethod
     def block_objects_signals(objects_list, block=True):
@@ -122,7 +123,8 @@ class AttributeConfigurationView(QtGui.QFrame):
             if att.name == selected_attribute:
                 return att
 
-    def enable_anonymization_panels(self, enabled):
+    def enable_anonymization_panels(self, att):
+        enabled = att.is_qi_attribute()
         self.suppression_panel.setEnabled(enabled)
         self.generalization_panel.setEnabled(enabled)
 
