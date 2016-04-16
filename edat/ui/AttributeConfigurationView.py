@@ -94,6 +94,8 @@ class AttributeConfigurationView(QtGui.QFrame):
                 self.weight_spin_box.setValue(att.weight)
 
                 self.block_objects_signals(combos, False)
+
+                self.enable_anonymization_panels(att.is_qi_attribute())
                 break
 
     def save_attribute_info(self, text):
@@ -119,4 +121,8 @@ class AttributeConfigurationView(QtGui.QFrame):
         for att in self.data_config.attributes_list:
             if att.name == selected_attribute:
                 return att
+
+    def enable_anonymization_panels(self, enabled):
+        self.suppression_panel.setEnabled(enabled)
+        self.generalization_panel.setEnabled(enabled)
 

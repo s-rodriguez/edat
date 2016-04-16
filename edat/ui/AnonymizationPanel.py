@@ -46,7 +46,6 @@ class AnonymizationPanel(QtGui.QFrame):
     def on_push_button_clicked(self):
         pass
 
-
 class SuppressionPanel(AnonymizationPanel):
 
     def get_slider_text(self):
@@ -66,5 +65,6 @@ class GeneralizationPanel(AnonymizationPanel):
 
     def on_push_button_clicked(self):
         self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute())
+
 
 
