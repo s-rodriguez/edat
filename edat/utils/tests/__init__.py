@@ -1,10 +1,8 @@
-import os
-
-from af.utils.tests.af_test import create_db_and_data_config_associated
-from edat.model.Project import Project
-
 
 def create_full_project():
+    import os
+    from af.utils.tests.af_test import create_db_and_data_config_associated
+    from edat.model.Project import Project
 
     data_config = create_db_and_data_config_associated()
     path_location = os.path.abspath('.')

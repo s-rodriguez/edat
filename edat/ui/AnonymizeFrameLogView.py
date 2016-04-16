@@ -1,10 +1,14 @@
 import logging
-import sys
 
-from PyQt4.QtCore import QObject, pyqtSignal
-from PyQt4.QtGui import QFrame, QPushButton, QHBoxLayout, QPlainTextEdit, QApplication
+from PyQt4.QtGui import (
+    QFrame,
+    QPushButton,
+    QHBoxLayout,
+    QPlainTextEdit,
+    QApplication,
+)
 
-from edat.utils import strings
+from edat.utils import strings, EdatLoggingHandler
 
 
 class AnonymizeFrameLogView(QFrame):
@@ -33,35 +37,12 @@ class AnonymizeFrameLogView(QFrame):
         self.log_panel.setReadOnly(True)
         self.main_layout.addWidget(self.log_panel, 3)
 
-        self.logging_handler = QPlainTextEditLogger()
+        self.logging_handler = EdatLoggingHandler.EdatLoggingHandler()
 
         logging.getLogger().setLevel(logging.INFO)
         logging.getLogger().addHandler(self.logging_handler)
 
-        XStream.stdout().messageWritten.connect(self.log_panel.appendPlainText)
+        EdatLoggingHandler.XStream.stdout().messageWritten.connect(self.update_log_panel)
 
-
-class QPlainTextEditLogger(logging.Handler):
-
-    def __init__(self):
-        logging.Handler.__init__(self)
-        self.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-
-    def emit(self, record):
-        msg = self.format(record)
-        XStream.stdout().write(msg)
-        
-
-class XStream(QObject):
-    _stdout = None
-    messageWritten = pyqtSignal(str)
-
-    @staticmethod
-    def stdout():
-        if ( not XStream._stdout ):
-            XStream._stdout = XStream()
-        return XStream._stdout
-
-    def write( self, msg ):
-        if ( not self.signalsBlocked() ):
-            self.messageWritten.emit(msg)
+    def update_log_panel(self, msg):
+        self.log_panel.appendPlainText(msg)
