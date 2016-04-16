@@ -3,10 +3,10 @@ from PyQt4 import QtGui
 from PyQt4.QtGui import QAbstractItemView, QHeaderView
 
 
-class DataTableView(QtGui.QTableView):
+class AbstractDataTableView(QtGui.QTableView):
 
     def __init__(self, table_name, db_location):
-        super(DataTableView, self).__init__()
+        super(AbstractDataTableView, self).__init__()
 
         self.table_name = table_name
         self.db_location = db_location

@@ -1,9 +1,9 @@
 from PyQt4.QtGui import QStandardItemModel, QStandardItem
 from af.controller.data.CSVController import CSVController
 
-from edat.ui.db.AbstractDataTableView import DataTableView
+from edat.ui.db.AbstractDataTableView import AbstractDataTableView
 
-class CSVTableView(DataTableView):
+class CSVTableView(AbstractDataTableView):
 
     def __init__(self, table_name, db_location):
         super(CSVTableView, self).__init__(table_name, db_location)
