@@ -43,7 +43,7 @@ class HierarchyView(QtGui.QDialog):
     def fill_values(self, attribute_values):
 
         for n_row in range(0, len(attribute_values)):
-            for n_col in range(0, self.table_view.colorCount()):
+            for n_col in range(0, self.table_view.columnCount()):
                 if n_col == 0:
                     widget = QtGui.QLabel()
                     self.table_view.setItem(n_row, n_col, QTableWidgetItem(attribute_values[n_row]))
