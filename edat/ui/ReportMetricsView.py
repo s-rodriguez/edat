@@ -121,17 +121,25 @@ class ReportMetricsView(QtGui.QFrame):
         self.main_layout.addWidget(self.export_report_frame, 0, Qt.AlignVCenter)
 
     def export_report(self):
-        report_location = create_basic_report(self.transformation_metrics)
-        title = 'Report Exported'
-        text_message = 'The report has been exported!'
-        msg_box = utils_ui.create_message_box(title, text_message, QtGui.QMessageBox.Information)
-        msg_box.setStandardButtons(QtGui.QMessageBox.Ok)
-        msg_box.setDetailedText('Location of the report: {0}'.format(report_location))
-        open_report_button = msg_box.addButton(QtGui.QPushButton('Open Report'), QtGui.QMessageBox.HelpRole)
-        msg_box.exec_()
 
-        if msg_box.buttonRole(msg_box.clickedButton()) == QtGui.QMessageBox.HelpRole:
-            webbrowser.open(report_location, 2)
+        items = "HTML (*.html);; PDF (*.pdf)"
+        filepath, filter_extension = QtGui.QFileDialog.getSaveFileNameAndFilter(self, 'Export file as', '', items)
+
+        if filepath:
+            report_extension = str(filter_extension.split('(*.')[1].split(')')[0])
+
+            report_location = create_basic_report(self.transformation_metrics, report_location_path=str(filepath), convert_to_format=report_extension)
+
+            title = 'Report Exported'
+            text_message = 'The report has been exported!'
+            msg_box = utils_ui.create_message_box(title, text_message, QtGui.QMessageBox.Information)
+            msg_box.setStandardButtons(QtGui.QMessageBox.Ok)
+            msg_box.setDetailedText('Location of the report: {0}'.format(report_location))
+            open_report_button = msg_box.addButton(QtGui.QPushButton('Open Report'), QtGui.QMessageBox.HelpRole)
+            msg_box.exec_()
+
+            if msg_box.buttonRole(msg_box.clickedButton()) == QtGui.QMessageBox.HelpRole:
+                webbrowser.open(report_location, 2)
 
 
     @staticmethod
