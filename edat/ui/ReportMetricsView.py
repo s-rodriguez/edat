@@ -1,3 +1,5 @@
+import webbrowser
+
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 
@@ -96,14 +98,14 @@ class ReportMetricsView(QtGui.QFrame):
 
                 scroll_area = self.get_scrollable_area_with_value(value)
                 additional_info_layout.addWidget(scroll_area)
-        
+
         additional_info_layout.addStretch(1)
         self.additional_information_layout.addWidget(additional_info_frame)
 
     def set_export_report_panel(self):
         self.export_report_frame = QtGui.QFrame()
         self.export_report_layout = QtGui.QHBoxLayout()
-        
+
         self.export_report_layout.addStretch(1)
 
         self.export_button = QtGui.QPushButton("Export Report")
@@ -125,7 +127,12 @@ class ReportMetricsView(QtGui.QFrame):
         msg_box = utils_ui.create_message_box(title, text_message, QtGui.QMessageBox.Information)
         msg_box.setStandardButtons(QtGui.QMessageBox.Ok)
         msg_box.setDetailedText('Location of the report: {0}'.format(report_location))
+        open_report_button = msg_box.addButton(QtGui.QPushButton('Open Report'), QtGui.QMessageBox.HelpRole)
         msg_box.exec_()
+
+        if msg_box.buttonRole(msg_box.clickedButton()) == QtGui.QMessageBox.HelpRole:
+            webbrowser.open(report_location, 2)
+
 
     @staticmethod
     def create_hbox_frame_title_and_value(title, value):
@@ -133,7 +140,7 @@ class ReportMetricsView(QtGui.QFrame):
         h_box_layout = QtGui.QHBoxLayout()
         h_box_layout.setContentsMargins(0, 0, 0, 0)
         h_box_layout.setSpacing(0)
-        
+
         eq_amount_title = TextUtils.get_caption_styled_text(title, italic=True)
         h_box_layout.addWidget(eq_amount_title)
 
@@ -152,7 +159,7 @@ class ReportMetricsView(QtGui.QFrame):
         scroll_layout = QtGui.QVBoxLayout()
         scroll_widget.setLayout(scroll_layout)
 
-        scroll_layout.addWidget(TextUtils.get_caption_styled_text("{0}".format(str(value))))     
+        scroll_layout.addWidget(TextUtils.get_caption_styled_text("{0}".format(str(value))))
 
         scroll_area.setWidget(scroll_widget)
         scroll_area.setWidgetResizable(True)
