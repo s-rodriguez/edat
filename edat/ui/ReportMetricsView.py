@@ -1,8 +1,10 @@
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 
+from af.model.reports import create_basic_report
 from af.model.reports.TransformationMetrics import TransformationMetrics
 
+import edat.utils.ui as utils_ui
 from edat.ui.db.MetricsTableView import MetricsTableView
 from edat.utils.ui.TextUtils import TextUtils
 
@@ -19,6 +21,7 @@ class ReportMetricsView(QtGui.QFrame):
 
         self.set_general_information_panel()
         self.set_additional_information_panel()
+        self.set_export_report_panel()
 
         self.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Plain)
         self.setLayout(self.main_layout)
@@ -96,6 +99,33 @@ class ReportMetricsView(QtGui.QFrame):
         
         additional_info_layout.addStretch(1)
         self.additional_information_layout.addWidget(additional_info_frame)
+
+    def set_export_report_panel(self):
+        self.export_report_frame = QtGui.QFrame()
+        self.export_report_layout = QtGui.QHBoxLayout()
+        
+        self.export_report_layout.addStretch(1)
+
+        self.export_button = QtGui.QPushButton("Export Report")
+        self.export_button.clicked.connect(self.export_report)
+        self.export_button.setMaximumSize(200, 50)
+        self.export_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
+        self.export_report_layout.addWidget(self.export_button, 0, Qt.AlignVCenter)
+
+        self.export_report_layout.addStretch(1)
+
+        self.export_report_frame.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Plain)
+        self.export_report_frame.setLayout(self.export_report_layout)
+        self.main_layout.addWidget(self.export_report_frame, 0, Qt.AlignVCenter)
+
+    def export_report(self):
+        report_location = create_basic_report(self.transformation_metrics)
+        title = 'Report Exported'
+        text_message = 'The report has been exported!'
+        msg_box = utils_ui.create_message_box(title, text_message, QtGui.QMessageBox.Information)
+        msg_box.setStandardButtons(QtGui.QMessageBox.Ok)
+        msg_box.setDetailedText('Location of the report: {0}'.format(report_location))
+        msg_box.exec_()
 
     @staticmethod
     def create_hbox_frame_title_and_value(title, value):
