@@ -149,6 +149,8 @@ class ProjectMainWindow(QMainWindow):
             self.update_input_and_configuration_tab()
             if self.anonymized_db_exists():
                 self.update_output_and_metrics_tab()
+            else:
+                self.tab_widget.setTabEnabled(1, False)
 
     def build_window_title(self):
         title = strings.WINDOW_TITLE
@@ -167,8 +169,7 @@ class ProjectMainWindow(QMainWindow):
             self.update_output_data_view()
             self.update_report_metrics_view()
         except Exception, e:
-            self.tab_widget.setTabEnabled(False, 1)
-            pass
+            self.tab_widget.setTabEnabled(1, False)
 
     def update_input_data_view(self):
         utils_ui.clean_layout(self.input_data_layout)
