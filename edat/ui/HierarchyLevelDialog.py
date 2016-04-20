@@ -16,16 +16,23 @@ class HierarchyLevelDialog(QtGui.QDialog):
         main_layout.addLayout(level_name_form_view)
 
         self.level_items_view = QtGui.QListWidget()
+        self.level_items_view.edit
         main_layout.addWidget(self.level_items_view)
 
-        add_item_layout = QtGui.QHBoxLayout()
+        add_or_remove_item_layout = QtGui.QHBoxLayout()
 
         self.item_name = QtGui.QLineEdit()
-        add_item_layout.addWidget(self.item_name)
-        add_node_button = QtGui.QPushButton("Add")
-        add_node_button.clicked.connect(self.add_node)
-        add_item_layout.addWidget(add_node_button)
-        main_layout.addLayout(add_item_layout)
+        add_or_remove_item_layout.addWidget(self.item_name)
+
+        add_item_button = QtGui.QPushButton("Add")
+        add_item_button.clicked.connect(self.add_item)
+        add_or_remove_item_layout.addWidget(add_item_button)
+
+        remove_item_button = QtGui.QPushButton("Remove")
+        remove_item_button.clicked.connect(self.remove_item)
+        add_or_remove_item_layout.addWidget(remove_item_button)
+
+        main_layout.addLayout(add_or_remove_item_layout)
 
         ok_and_cancel_buttons = QtGui.QDialogButtonBox(
             QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel,
@@ -40,14 +47,20 @@ class HierarchyLevelDialog(QtGui.QDialog):
 
         self.show()
 
-    def add_node(self):
+    def add_item(self):
         item_name = self.item_name.text()
         if item_name:
             for i in range(self.level_items_view.count()):
                 if item_name == self.level_items_view.item(i).text():
                     return
             self.item_name.clear()
-            self.level_items_view.addItem(item_name)
+            list_item = QtGui.QListWidgetItem(item_name)
+            list_item.setFlags(list_item.flags() | Qt.ItemIsEditable)
+            self.level_items_view.addItem(list_item)
+
+    def remove_item(self):
+        for item in self.level_items_view.selectedItems():
+            self.level_items_view.takeItem(self.level_items_view.row(item))
 
     def get_level_items(self):
         items = []
