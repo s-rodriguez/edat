@@ -68,5 +68,8 @@ class HierarchyLevelDialog(QtGui.QDialog):
             items.append(str(self.level_items_view.item(i).text()))
         return items
 
+    def get_level_name(self):
+        return str(self.level_name_edit_text.text())
+
 
 
