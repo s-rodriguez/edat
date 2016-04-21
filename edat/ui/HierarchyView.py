@@ -1,5 +1,9 @@
 from PyQt4 import QtGui
 
+from PyQt4.QtCore import (
+    QThread,
+    pyqtSignal,
+)
 from PyQt4.QtCore import Qt
 
 from af.controller.data.SqliteController import SqliteController
@@ -14,16 +18,13 @@ class HierarchyView(QtGui.QMainWindow):
         self.project_controller = project_controller
         self.attribute = attribute
         self.hierarchy_levels = []
-        # TODO:  se crea el SqliteController en vez de usar la factory,
-        # ya que el Csvcontroller no tiene implementado el get_distinct_qi_values
-        # una vez implementado, usar la factory
-        self.db_controller = SqliteController(self.project_controller.project.data_config.location)
-
         self.leaf_values = []
-        for value in self.db_controller.get_distinct_qi_values(self.project_controller.project.data_config.table, self.attribute.name):
-            self.leaf_values.append(str(value))
 
-        self.hierarchy_levels.append(self.leaf_values)
+        self.load_attributes_values_thread = LoadAttributeValuesThread(self.project_controller, attribute)
+        self.load_attributes_values_thread.load_attribute_values_finished.connect(self.load_attributes_finished_update)
+
+        self.load_attributes_values_thread.start()
+
 
         self.mainLayout = QtGui.QVBoxLayout()
 
@@ -32,7 +33,6 @@ class HierarchyView(QtGui.QMainWindow):
         self.setCentralWidget(self.ctr_frame)
 
         self.hierarchy_table_view = QtGui.QTableWidget()
-        self.update_table_view()
 
         self.mainLayout.addWidget(self.hierarchy_table_view)
 
@@ -82,7 +82,34 @@ class HierarchyView(QtGui.QMainWindow):
                 self.hierarchy_levels.append(level_items)
                 self.update_table_view()
 
+    def load_attributes_finished_update(self, values):
+        self.leaf_values = values
+        self.hierarchy_levels.append(self.leaf_values)
+        self.update_table_view()
 
+
+class LoadAttributeValuesThread(QThread):
+
+    load_attribute_values_finished = pyqtSignal(list)
+
+    def __init__(self, project_controller, attribute):
+        QThread.__init__(self)
+        self.project_controller = project_controller
+        self.attribute = attribute
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        # TODO:  se crea el SqliteController en vez de usar la factory,
+        # ya que el Csvcontroller no tiene implementado el get_distinct_qi_values
+        # una vez implementado, usar la factory
+        db_controller = SqliteController(self.project_controller.project.data_config.location)
+        values = []
+        for value in db_controller.get_distinct_qi_values(self.project_controller.project.data_config.table,
+                                                               self.attribute.name):
+            values.append(str(value))
+        self.load_attribute_values_finished.emit(values)
 
 
 
