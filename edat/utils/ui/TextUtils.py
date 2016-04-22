@@ -20,6 +20,10 @@ class TextUtils:
         def get_caption_styled_text(text, weight=QFont.Normal, italic=False):
             input_data_label = QtGui.QLabel(text)
             input_data_label.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
-            input_data_label.setFont(QFont("Arial", 12, weight=weight, italic=italic))
+            input_data_label.setFont(TextUtils.get_caption_text_font(weight, italic))
             input_data_label.setMargin(5)
             return input_data_label
+
+        @staticmethod
+        def get_caption_text_font(weight=QFont.Normal, italic=False):
+            return QFont("Arial", 12, weight=weight, italic=italic)
