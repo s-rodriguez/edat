@@ -48,30 +48,43 @@ class HierarchyView(QtGui.QMainWindow):
         self.show()
 
     def update_table_view(self):
-        self.hierarchy_table_view.setColumnCount(len(self.hierarchy_levels))
         self.hierarchy_table_view.setRowCount(len(self.leaf_items))
         self.fill_values()
         self.build_columns_headers()
         self.hierarchy_table_view.resizeColumnsToContents()
         self.hierarchy_table_view.resizeRowsToContents()
 
-    def fill_values(self):
+    def add_column(self, n_col):
         for n_row in range(0, len(self.leaf_items)):
-            for n_col in range(0, len(self.hierarchy_levels)):
-                if n_col == 0:
-                    self.hierarchy_table_view.setCellWidget(n_row, n_col, QtGui.QLabel(self.leaf_items[n_row]))
-                else:
-                    level_value_combo_box = QtGui.QComboBox(self.hierarchy_table_view)
-                    level_value_combo_box.setProperty("row", n_row)
-                    level_value_combo_box.setProperty("col", n_col)
-                    level_value_combo_box.addItems(list(self.hierarchy_levels[n_col].items))
-                    level_value_combo_box.currentIndexChanged.connect(self.on_level_value_updated)
-                    self.hierarchy_table_view.setCellWidget(n_row, n_col, level_value_combo_box)
+            if n_col == 0:
+                self.hierarchy_table_view.setCellWidget(n_row, n_col, QtGui.QLabel(self.leaf_items[n_row]))
+            else:
+                level_value_combo_box = QtGui.QComboBox(self.hierarchy_table_view)
+                level_value_combo_box.setProperty("row", n_row)
+                level_value_combo_box.setProperty("col", n_col)
+                level_value_combo_box.addItems(list(self.hierarchy_levels[n_col].items))
+                level_value_combo_box.currentIndexChanged.connect(self.on_level_value_updated)
+                self.hierarchy_table_view.setCellWidget(n_row, n_col, level_value_combo_box)
+
+    def fill_values(self):
+        level_count = len(self.hierarchy_levels)
+        table_column_count = self.hierarchy_table_view.columnCount()
+
+        if level_count == table_column_count:
+            return
+
+        self.hierarchy_table_view.setColumnCount(level_count)
+
+        if level_count > table_column_count:
+            while table_column_count < level_count:
+                self.add_column(table_column_count)
+                table_column_count += 1
 
     def on_level_value_updated(self):
         sender = self.sender()
-        if sender.itemText(0) == "-- Select a value --":
+        if sender.itemText(0) == SELECT_VALUE_DEFAULT:
             sender.removeItem(0)
+            return
 
         n_row_updated = sender.property("row").toInt()[0]
         n_col_updated = sender.property("col").toInt()[0]
@@ -82,6 +95,9 @@ class HierarchyView(QtGui.QMainWindow):
 
         item_new_value = self.hierarchy_table_view.cellWidget(n_row_updated, n_col_updated).currentText()
         item_value_to_update = self.hierarchy_table_view.cellWidget(n_row_updated, n_col_to_update).currentText()
+
+        if item_value_to_update == SELECT_VALUE_DEFAULT:
+            return
 
         for n_row in range(0, len(self.leaf_items)):
             item = self.hierarchy_table_view.cellWidget(n_row, n_col_to_update)
