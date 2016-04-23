@@ -61,17 +61,36 @@ class HierarchyView(QtGui.QMainWindow):
                 if n_col == 0:
                     self.hierarchy_table_view.setCellWidget(n_row, n_col, QtGui.QLabel(self.leaf_items[n_row]))
                 else:
-                    level_value_combo_box = QtGui.QComboBox()
+                    level_value_combo_box = QtGui.QComboBox(self.hierarchy_table_view)
                     level_value_combo_box.setProperty("row", n_row)
                     level_value_combo_box.setProperty("col", n_col)
                     level_value_combo_box.addItems(list(self.hierarchy_levels[n_col].items))
-                    level_value_combo_box.currentIndexChanged.connect(self.on_level_value_changed)
+                    level_value_combo_box.currentIndexChanged.connect(self.on_level_value_updated)
                     self.hierarchy_table_view.setCellWidget(n_row, n_col, level_value_combo_box)
 
-    def on_level_value_changed(self, past):
+    def on_level_value_updated(self):
         sender = self.sender()
         if sender.itemText(0) == "-- Select a value --":
             sender.removeItem(0)
+
+        n_row_updated = sender.property("row").toInt()[0]
+        n_col_updated = sender.property("col").toInt()[0]
+        if n_col_updated < 2:
+            return
+
+        n_col_to_update = n_col_updated - 1
+
+        item_new_value = self.hierarchy_table_view.cellWidget(n_row_updated, n_col_updated).currentText()
+        item_value_to_update = self.hierarchy_table_view.cellWidget(n_row_updated, n_col_to_update).currentText()
+
+        for n_row in range(0, len(self.leaf_items)):
+            item = self.hierarchy_table_view.cellWidget(n_row, n_col_to_update)
+            if item.currentText() == item_value_to_update:
+                combo_box = self.hierarchy_table_view.cellWidget(n_row, n_col_updated)
+                for i in range(combo_box.count()):
+                    if combo_box.itemText(i) == item_new_value:
+                        combo_box.setCurrentIndex(i)
+                        break
 
     def build_columns_headers(self):
         for n_col in range(0, len(self.hierarchy_levels)):
@@ -114,6 +133,7 @@ class LoadAttributeValuesThread(QThread):
                                                                self.attribute.name):
             values.append(str(value))
         self.load_attribute_values_finished.emit(values)
+
 
 class HierachyLevel:
     def __init__(self, name, items, position):
