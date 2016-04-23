@@ -6,8 +6,10 @@ from PyQt4.QtCore import (
 )
 from PyQt4.QtCore import Qt
 
-from af.controller.data.SqliteController import SqliteController
+from af.controller.data.DataFactory import DataFactory
 from edat.ui.HierarchyLevelDialog import HierarchyLevelDialog
+
+SELECT_VALUE_DEFAULT = "-- Select a value --"
 
 
 class HierarchyView(QtGui.QMainWindow):
@@ -59,9 +61,17 @@ class HierarchyView(QtGui.QMainWindow):
                 if n_col == 0:
                     self.hierarchy_table_view.setCellWidget(n_row, n_col, QtGui.QLabel(self.leaf_items[n_row]))
                 else:
-                    widget = QtGui.QComboBox()
-                    widget.addItems(list(self.hierarchy_levels[n_col].items))
-                    self.hierarchy_table_view.setCellWidget(n_row, n_col, widget)
+                    level_value_combo_box = QtGui.QComboBox()
+                    level_value_combo_box.setProperty("row", n_row)
+                    level_value_combo_box.setProperty("col", n_col)
+                    level_value_combo_box.addItems(list(self.hierarchy_levels[n_col].items))
+                    level_value_combo_box.currentIndexChanged.connect(self.on_level_value_changed)
+                    self.hierarchy_table_view.setCellWidget(n_row, n_col, level_value_combo_box)
+
+    def on_level_value_changed(self, past):
+        sender = self.sender()
+        if sender.itemText(0) == "-- Select a value --":
+            sender.removeItem(0)
 
     def build_columns_headers(self):
         for n_col in range(0, len(self.hierarchy_levels)):
@@ -73,6 +83,7 @@ class HierarchyView(QtGui.QMainWindow):
             level_items = self.new_level_dialog.get_level_items()
             if level_items:
                 level_name = 'Level ' + str(len(self.hierarchy_levels)) + ' ' + self.new_level_dialog.get_level_name()
+                level_items.insert(0, SELECT_VALUE_DEFAULT)
                 new_level = HierachyLevel(level_name, level_items, len(self.hierarchy_levels))
                 self.hierarchy_levels.append(new_level)
                 self.update_table_view()
@@ -97,12 +108,9 @@ class LoadAttributeValuesThread(QThread):
         self.wait()
 
     def run(self):
-        # TODO:  se crea el SqliteController en vez de usar la factory,
-        # ya que el Csvcontroller no tiene implementado el get_distinct_qi_values
-        # una vez implementado, usar la factory
-        db_controller = SqliteController(self.project_controller.project.data_config.location)
+        controller = DataFactory.create_controller(self.project_controller.project.data_config.location, self.project_controller.project.data_config.type)
         values = []
-        for value in db_controller.get_distinct_qi_values(self.project_controller.project.data_config.table,
+        for value in controller.get_distinct_qi_values(self.project_controller.project.data_config.table,
                                                                self.attribute.name):
             values.append(str(value))
         self.load_attribute_values_finished.emit(values)
