@@ -1,12 +1,16 @@
 from PyQt4 import QtGui
 
 from PyQt4.QtCore import Qt
+from af.exceptions import DuplicatedValueInHierarchyException
+import edat.utils.ui as utils_ui
+from edat.utils import strings
 
 
 class HierarchyLevelDialog(QtGui.QDialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, existing_item_values, parent=None):
         super(QtGui.QDialog, self).__init__(parent)
+        self.existing_item_values = existing_item_values
 
         main_layout = QtGui.QVBoxLayout()
 
@@ -50,9 +54,17 @@ class HierarchyLevelDialog(QtGui.QDialog):
     def add_item(self):
         item_name = self.item_name.text()
         if item_name:
-            for i in range(self.level_items_view.count()):
-                if item_name == self.level_items_view.item(i).text():
-                    return
+            try:
+                for i in range(self.level_items_view.count()):
+                    if item_name == self.level_items_view.item(i).text():
+                        raise DuplicatedValueInHierarchyException("Duplicated value in hierarchy : %s" % item_name)
+
+                if str(item_name) in self.existing_item_values:
+                    raise DuplicatedValueInHierarchyException("Duplicated value in hierarchy : %s" % item_name)
+            except DuplicatedValueInHierarchyException as e:
+                utils_ui.showMessageAlertBox(parent=self, title=strings.CREATE_HIERARCHY_ITEM_ERROR, message=e.message)
+                return
+
             self.item_name.clear()
             list_item = QtGui.QListWidgetItem(item_name)
             list_item.setFlags(list_item.flags() | Qt.ItemIsEditable)

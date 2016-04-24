@@ -8,7 +8,11 @@ from PyQt4.QtCore import Qt
 
 from af.controller.data.DataFactory import DataFactory
 from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
+from af.exceptions import InvalidValueInHierarchyException
 from edat.ui.HierarchyLevelDialog import HierarchyLevelDialog
+import edat.utils.ui as utils_ui
+from edat.utils import strings
+
 
 SELECT_VALUE_DEFAULT = "-- Select a value --"
 
@@ -117,7 +121,12 @@ class HierarchyView(QtGui.QMainWindow):
                 level_value_combo_box = QtGui.QComboBox(self.hierarchy_table_view)
                 level_value_combo_box.setProperty("row", n_row)
                 level_value_combo_box.setProperty("col", n_col)
-                level_value_combo_box.addItems(list(self.hierarchy_levels[n_col].items))
+
+                column_items = self.hierarchy_levels[n_col].items
+                if SELECT_VALUE_DEFAULT not in column_items:
+                    column_items.insert(0, SELECT_VALUE_DEFAULT)
+
+                level_value_combo_box.addItems(column_items)
                 level_value_combo_box.currentIndexChanged.connect(self.on_level_value_updated)
                 self.hierarchy_table_view.setCellWidget(n_row, n_col, level_value_combo_box)
 
@@ -168,12 +177,15 @@ class HierarchyView(QtGui.QMainWindow):
             self.hierarchy_table_view.setHorizontalHeaderItem(n_col, QtGui.QTableWidgetItem(self.hierarchy_levels[n_col].name))
 
     def on_new_level(self):
-        self.new_level_dialog = HierarchyLevelDialog(self)
+        hierarchy_items = set()
+        for level in range(1, len(self.hierarchy_levels)):
+            hierarchy_items |= set(self.hierarchy_levels[level].items)
+
+        self.new_level_dialog = HierarchyLevelDialog(hierarchy_items, self)
         if self.new_level_dialog.exec_():
             level_items = self.new_level_dialog.get_level_items()
             if level_items:
                 level_name = 'Level ' + str(len(self.hierarchy_levels)) + ' ' + self.new_level_dialog.get_level_name()
-                level_items.insert(0, SELECT_VALUE_DEFAULT)
                 new_level = HierachyLevel(level_name, level_items, len(self.hierarchy_levels))
                 self.hierarchy_levels.append(new_level)
                 self.update_table_view()
@@ -184,6 +196,15 @@ class HierarchyView(QtGui.QMainWindow):
         self.hierarchy_levels.append(leaf_level)
         self.update_table_view()
 
+    def validate_hierarchy(self):
+        model = self.hierarchy_table_view.model()
+        for col_id in range(model.columnCount()):
+            for row_id in range(1, model.rowCount()):
+                cell_widget = self.hierarchy_table_view.cellWidget(row_id, col_id)
+                cell_value = cell_widget.currentText() if col_id != 0 else cell_widget.text()
+                if cell_value == SELECT_VALUE_DEFAULT:
+                    raise InvalidValueInHierarchyException("Default value present in hierarchy")
+
     def on_create_hierarchy(self):
         reply = QtGui.QMessageBox.question(self,
                                            'Hierarchy Creation',
@@ -193,12 +214,19 @@ class HierarchyView(QtGui.QMainWindow):
                                            )
 
         if reply == QtGui.QMessageBox.Yes:
+
+            try:
+                self.validate_hierarchy()
+
+            except InvalidValueInHierarchyException as e:
+                utils_ui.showMessageAlertBox(parent=self, title=strings.CREATE_HIERARCHY_ITEM_ERROR, message=e.message)
+                return
+
             model = self.hierarchy_table_view.model()
             rows = []
             for row_id in range(model.rowCount()):
                 row_data = []
                 for col_id in range(model.columnCount()):
-                    item_index = model.index(row_id, col_id)
                     cell_widget = self.hierarchy_table_view.cellWidget(row_id, col_id)
                     cell_value = cell_widget.currentText() if col_id != 0 else cell_widget.text()
                     row_data.append(str(cell_value))

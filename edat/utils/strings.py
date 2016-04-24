@@ -3,6 +3,8 @@ ANONYMIZE = "Anonymize"
 CONFIGURATION_TAB = "Data and Configuration"
 CREATE_PROJECT_ERROR = "Create Project Error"
 
+CREATE_HIERARCHY_ITEM_ERROR = "Create hierarchy item error"
+
 EXPORT_CONFIG_ERROR = "Could not export configuration"
 
 IMPORT_DB_WIZARD = 'Import DB Wizard'
