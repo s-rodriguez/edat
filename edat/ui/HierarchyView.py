@@ -74,7 +74,11 @@ class HierarchyView(QtGui.QMainWindow):
 
         for col, level in enumerate(hierarchy_levels):
             if col < hierarchy_depth:
-                distinct_level_values = list(set(level))
+
+                distinct_level_values = []
+                for i in level:
+                    if i not in distinct_level_values:
+                        distinct_level_values.append(i)
 
                 if col == 0:
                     self.leaf_items = distinct_level_values
@@ -87,6 +91,16 @@ class HierarchyView(QtGui.QMainWindow):
                 self.hierarchy_levels.append(new_level)
 
         self.update_table_view()
+
+        for row_id, dimension_values in enumerate(nodes_dimension_values):
+            for col_id, value in enumerate(dimension_values):
+                if col_id != 0 and col_id < hierarchy_depth:
+                    combo_box = self.hierarchy_table_view.cellWidget(row_id, col_id)
+                    index = combo_box.findText(value, Qt.MatchFixedString)
+                    if index >= 0:
+                        combo_box.blockSignals(True)
+                        combo_box.setCurrentIndex(index)
+                        combo_box.blockSignals(False)
 
     def update_table_view(self):
         self.hierarchy_table_view.setRowCount(len(self.leaf_items))
