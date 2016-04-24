@@ -4,7 +4,7 @@ from PyQt4.QtCore import (
     QThread,
     pyqtSignal,
 )
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, SIGNAL
 
 from af.controller.data.DataFactory import DataFactory
 from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
@@ -34,6 +34,9 @@ class HierarchyView(QtGui.QMainWindow):
         self.setCentralWidget(self.ctr_frame)
 
         self.hierarchy_table_view = QtGui.QTableWidget()
+        headers = self.hierarchy_table_view.horizontalHeader()
+        headers.setContextMenuPolicy(Qt.CustomContextMenu)
+        headers.customContextMenuRequested.connect(self.open_table_context_menu)
 
         if self.attribute.hierarchy is None:
             self.load_attributes_values_thread = LoadAttributeValuesThread(self.project_controller, self.attribute)
@@ -237,6 +240,55 @@ class HierarchyView(QtGui.QMainWindow):
 
             new_hierarchy = BaseHierarchyController.create_hierarchy_from_list_of_values(rows)
             self.attribute.hierarchy = new_hierarchy
+
+    def open_table_context_menu(self, position):
+        menu = QtGui.QMenu()
+        edit_level_action = menu.addAction("Edit Level")
+        remove_level_action = menu.addAction("Remove Level")
+        action = menu.exec_(self.hierarchy_table_view.mapToGlobal(position))
+        level_id = self.hierarchy_table_view.columnAt(position.x())
+        if action == edit_level_action:
+            self.edit_level(level_id)
+        elif action == remove_level_action:
+            self.remove_level(level_id)
+
+    def edit_level(self, level_id):
+        if level_id != 0:
+            model = self.hierarchy_table_view.model()
+            hierarchy_items = []
+            for row_id in range(model.rowCount()):
+                cell_widget = self.hierarchy_table_view.cellWidget(row_id, level_id)
+                cell_value = str(cell_widget.currentText())
+                hierarchy_items.append(cell_value)
+
+            update_level_dialog = HierarchyLevelDialog(set(hierarchy_items), self)
+            if update_level_dialog.exec_():
+                level_items = update_level_dialog.get_level_items()
+
+                if level_items:
+                    level_name = 'Level ' + str(len(self.hierarchy_levels)) + ' ' + update_level_dialog.get_level_name()
+
+                    new_level = HierachyLevel(level_name, level_items, len(self.hierarchy_levels))
+                    self.hierarchy_levels.insert(level_id, new_level)
+                    self.hierarchy_levels.pop(level_id+1)
+
+                    combo_items = list(level_items)
+                    if SELECT_VALUE_DEFAULT not in combo_items:
+                        combo_items.insert(0, SELECT_VALUE_DEFAULT)
+
+                    for row_id, item_value in enumerate(hierarchy_items):
+                        combo_box = self.hierarchy_table_view.cellWidget(row_id, level_id)
+                        combo_box.blockSignals(True)
+                        combo_box.clear()
+                        combo_box.addItems(combo_items)
+                        index = combo_box.findText(item_value, Qt.MatchFixedString)
+                        if index < 0:
+                            index = 0
+                        combo_box.setCurrentIndex(index)
+                        combo_box.blockSignals(False)
+
+    def remove_level(self,level_id):
+        print "REMOVEEEEEEEEEEe  LEVEL: ",level_id
 
 
 class LoadAttributeValuesThread(QThread):

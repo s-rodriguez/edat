@@ -48,7 +48,15 @@ class HierarchyLevelDialog(QtGui.QDialog):
         main_layout.addWidget(self.button_box)
 
         self.setLayout(main_layout)
-        self.setWindowTitle("Create Hierarchy Level")
+        if len(self.existing_item_values) == 0:
+            self.setWindowTitle("Create Hierarchy Level")
+        else:
+            # Load the existing values
+            self.setWindowTitle("Edit Hierarchy Level")
+            for item in self.existing_item_values:
+                list_item = QtGui.QListWidgetItem(item)
+                list_item.setFlags(list_item.flags() | Qt.ItemIsEditable)
+                self.level_items_view.addItem(list_item)
 
         self.show()
 
