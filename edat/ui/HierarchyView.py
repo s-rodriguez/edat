@@ -66,6 +66,7 @@ class HierarchyView(QtGui.QMainWindow):
         self.create_hiearchy_button = QtGui.QPushButton("Create Hierarchy")
         self.create_hiearchy_button.setMaximumSize(120, 60)
         self.create_hiearchy_button.clicked.connect(self.on_create_hierarchy)
+        self.create_hiearchy_button.setEnabled(False)
         horizontal_layout.addWidget(self.create_hiearchy_button)
 
         self.buttons_frame.setLayout(horizontal_layout)
@@ -115,6 +116,7 @@ class HierarchyView(QtGui.QMainWindow):
         self.build_columns_headers()
         self.hierarchy_table_view.resizeColumnsToContents()
         self.hierarchy_table_view.resizeRowsToContents()
+        self.create_hiearchy_button.setEnabled(len(self.hierarchy_levels) > 1)
 
     def add_column(self, n_col):
         for n_row in range(0, len(self.leaf_items)):
@@ -126,7 +128,7 @@ class HierarchyView(QtGui.QMainWindow):
                 level_value_combo_box.setProperty("col", n_col)
 
                 column_items = self.hierarchy_levels[n_col].items
-                if SELECT_VALUE_DEFAULT not in column_items:
+                if (SELECT_VALUE_DEFAULT not in column_items) and (len(column_items) > 1):
                     column_items.insert(0, SELECT_VALUE_DEFAULT)
 
                 level_value_combo_box.addItems(column_items)
@@ -289,6 +291,13 @@ class HierarchyView(QtGui.QMainWindow):
 
     def remove_level(self,level_id):
         print "REMOVEEEEEEEEEEe  LEVEL: ",level_id
+
+    def on_remove_column(self, n_col):
+        if n_col == 0 or n_col > self.hierarchy_table_view.columnCount():
+            return
+        self.hierarchy_table_view.removeColumn(n_col)
+        self.hierarchy_levels.pop(n_col)
+        self.update_table_view()
 
 
 class LoadAttributeValuesThread(QThread):
