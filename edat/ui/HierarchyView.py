@@ -145,22 +145,30 @@ class HierarchyView(QtGui.QMainWindow):
         self.update_table_view()
 
     def on_create_hierarchy(self):
-        model = self.hierarchy_table_view.model()
-        rows = []
-        for row_id in range(model.rowCount()):
-            row_data = []
-            for col_id in range(model.columnCount()):
-                item_index = model.index(row_id, col_id)
-                cell_widget = self.hierarchy_table_view.cellWidget(row_id, col_id)
-                cell_value = cell_widget.currentText() if col_id != 0 else cell_widget.text()
-                row_data.append(str(cell_value))
+        reply = QtGui.QMessageBox.question(self,
+                                           'Hierarchy Creation',
+                                           'The creation of the new hierarchy will override the current hierarchy saved in the attribute configuration.\n\nDo you want to proceed anyway?',
+                                           QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
+                                           QtGui.QMessageBox.No
+                                           )
 
-            if len(rows) > 0 and len(rows[0]) != len(row_data):
-                raise Exception("Hierarchy not well formed, different heights")
-            rows.append(row_data)
+        if reply == QtGui.QMessageBox.Yes:
+            model = self.hierarchy_table_view.model()
+            rows = []
+            for row_id in range(model.rowCount()):
+                row_data = []
+                for col_id in range(model.columnCount()):
+                    item_index = model.index(row_id, col_id)
+                    cell_widget = self.hierarchy_table_view.cellWidget(row_id, col_id)
+                    cell_value = cell_widget.currentText() if col_id != 0 else cell_widget.text()
+                    row_data.append(str(cell_value))
 
-        new_hierarchy = BaseHierarchyController.create_hierarchy_from_list_of_values(rows)
-        self.attribute.hierarchy = new_hierarchy
+                if len(rows) > 0 and len(rows[0]) != len(row_data):
+                    raise Exception("Hierarchy not well formed, different heights")
+                rows.append(row_data)
+
+            new_hierarchy = BaseHierarchyController.create_hierarchy_from_list_of_values(rows)
+            self.attribute.hierarchy = new_hierarchy
 
 
 class LoadAttributeValuesThread(QThread):
