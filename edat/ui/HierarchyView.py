@@ -38,16 +38,16 @@ class HierarchyView(QtGui.QMainWindow):
         headers.setContextMenuPolicy(Qt.CustomContextMenu)
         headers.customContextMenuRequested.connect(self.open_table_context_menu)
 
+        self.mainLayout.addWidget(self.hierarchy_table_view)
+
+        self.add_buttons()
+
         if self.attribute.hierarchy is None:
             self.load_attributes_values_thread = LoadAttributeValuesThread(self.project_controller, self.attribute)
             self.load_attributes_values_thread.load_attribute_values_finished.connect(self.load_attributes_finished_update)
             self.load_attributes_values_thread.start()
         else:
             self.load_hierarchy()
-
-        self.mainLayout.addWidget(self.hierarchy_table_view)
-
-        self.add_buttons()
 
         self.setWindowTitle(self.attribute.name + ' Hierarchy')
         self.showMaximized()
