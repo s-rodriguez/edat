@@ -7,6 +7,7 @@ from PyQt4.QtCore import (
 from PyQt4.QtCore import Qt
 
 from af.controller.data.DataFactory import DataFactory
+from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
 from edat.ui.HierarchyLevelDialog import HierarchyLevelDialog
 
 SELECT_VALUE_DEFAULT = "-- Select a value --"
@@ -36,16 +37,30 @@ class HierarchyView(QtGui.QMainWindow):
 
         self.mainLayout.addWidget(self.hierarchy_table_view)
 
-        self.add_level_button = QtGui.QPushButton("New level")
-        self.add_level_button.setMaximumSize(100, 60)
-        self.add_level_button.clicked.connect(self.on_new_level)
-
-        self.mainLayout.addWidget(self.add_level_button, 0, Qt.AlignCenter)
+        self.add_buttons()
 
         self.setWindowTitle(self.attribute.name + ' Hierarchy')
         self.showMaximized()
 
         self.show()
+
+    def add_buttons(self):
+        self.buttons_frame = QtGui.QFrame()
+        horizontal_layout = QtGui.QHBoxLayout()
+
+        self.add_level_button = QtGui.QPushButton("New level")
+        self.add_level_button.setMaximumSize(100, 60)
+        self.add_level_button.clicked.connect(self.on_new_level)
+        horizontal_layout.addWidget(self.add_level_button)
+
+        self.create_hiearchy_button = QtGui.QPushButton("Create Hierarchy")
+        self.create_hiearchy_button.setMaximumSize(120, 60)
+        self.create_hiearchy_button.clicked.connect(self.on_create_hierarchy)
+        horizontal_layout.addWidget(self.create_hiearchy_button)
+
+        self.buttons_frame.setLayout(horizontal_layout)
+
+        self.mainLayout.addWidget(self.buttons_frame, 0, Qt.AlignCenter)
 
     def update_table_view(self):
         self.hierarchy_table_view.setRowCount(len(self.leaf_items))
@@ -128,6 +143,24 @@ class HierarchyView(QtGui.QMainWindow):
         leaf_level = HierachyLevel('Leaf Node', self.leaf_items, len(self.hierarchy_levels))
         self.hierarchy_levels.append(leaf_level)
         self.update_table_view()
+
+    def on_create_hierarchy(self):
+        model = self.hierarchy_table_view.model()
+        rows = []
+        for row_id in range(model.rowCount()):
+            row_data = []
+            for col_id in range(model.columnCount()):
+                item_index = model.index(row_id, col_id)
+                cell_widget = self.hierarchy_table_view.cellWidget(row_id, col_id)
+                cell_value = cell_widget.currentText() if col_id != 0 else cell_widget.text()
+                row_data.append(str(cell_value))
+
+            if len(rows) > 0 and len(rows[0]) != len(row_data):
+                raise Exception("Hierarchy not well formed, different heights")
+            rows.append(row_data)
+
+        new_hierarchy = BaseHierarchyController.create_hierarchy_from_list_of_values(rows)
+        self.attribute.hierarchy = new_hierarchy
 
 
 class LoadAttributeValuesThread(QThread):
