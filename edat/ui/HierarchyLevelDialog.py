@@ -38,13 +38,14 @@ class HierarchyLevelDialog(QtGui.QDialog):
 
         main_layout.addLayout(add_or_remove_item_layout)
 
-        ok_and_cancel_buttons = QtGui.QDialogButtonBox(
+        self.button_box = QtGui.QDialogButtonBox(
             QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel,
             Qt.Horizontal, self)
-        ok_and_cancel_buttons.accepted.connect(self.accept)
-        ok_and_cancel_buttons.rejected.connect(self.reject)
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.button(QtGui.QDialogButtonBox.Ok).setEnabled(False)
+        self.button_box.rejected.connect(self.reject)
 
-        main_layout.addWidget(ok_and_cancel_buttons)
+        main_layout.addWidget(self.button_box)
 
         self.setLayout(main_layout)
         self.setWindowTitle("Create Hierarchy Level")
@@ -69,10 +70,12 @@ class HierarchyLevelDialog(QtGui.QDialog):
             list_item = QtGui.QListWidgetItem(item_name)
             list_item.setFlags(list_item.flags() | Qt.ItemIsEditable)
             self.level_items_view.addItem(list_item)
+            self.button_box.button(QtGui.QDialogButtonBox.Ok).setEnabled(True)
 
     def remove_item(self):
         for item in self.level_items_view.selectedItems():
             self.level_items_view.takeItem(self.level_items_view.row(item))
+        self.button_box.button(QtGui.QDialogButtonBox.Ok).setEnabled(self.level_items_view.count() != 0)
 
     def get_level_items(self):
         items = []
