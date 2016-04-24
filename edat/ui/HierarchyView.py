@@ -23,10 +23,6 @@ class HierarchyView(QtGui.QMainWindow):
         self.hierarchy_levels = []
         self.leaf_items = []
 
-        self.load_attributes_values_thread = LoadAttributeValuesThread(self.project_controller, attribute)
-        self.load_attributes_values_thread.load_attribute_values_finished.connect(self.load_attributes_finished_update)
-        self.load_attributes_values_thread.start()
-
         self.mainLayout = QtGui.QVBoxLayout()
 
         self.ctr_frame = QtGui.QWidget(self)
@@ -34,6 +30,13 @@ class HierarchyView(QtGui.QMainWindow):
         self.setCentralWidget(self.ctr_frame)
 
         self.hierarchy_table_view = QtGui.QTableWidget()
+
+        if self.attribute.hierarchy is None:
+            self.load_attributes_values_thread = LoadAttributeValuesThread(self.project_controller, self.attribute)
+            self.load_attributes_values_thread.load_attribute_values_finished.connect(self.load_attributes_finished_update)
+            self.load_attributes_values_thread.start()
+        else:
+            self.load_hierarchy()
 
         self.mainLayout.addWidget(self.hierarchy_table_view)
 
@@ -61,6 +64,29 @@ class HierarchyView(QtGui.QMainWindow):
         self.buttons_frame.setLayout(horizontal_layout)
 
         self.mainLayout.addWidget(self.buttons_frame, 0, Qt.AlignCenter)
+
+
+    def load_hierarchy(self):
+        hierarchy_depth = self.attribute.hierarchy.get_hierarchy_depth()
+        nodes_dimension_values = self.attribute.hierarchy.get_all_nodes_complete_transformation()
+
+        hierarchy_levels = map(list, zip(*nodes_dimension_values))
+
+        for col, level in enumerate(hierarchy_levels):
+            if col < hierarchy_depth:
+                distinct_level_values = list(set(level))
+
+                if col == 0:
+                    self.leaf_items = distinct_level_values
+                    level_name = 'Leaf Node'
+                else:
+                    level_name = 'Level ' + str(len(self.hierarchy_levels))
+                    distinct_level_values.insert(0, SELECT_VALUE_DEFAULT)
+
+                new_level = HierachyLevel(level_name, distinct_level_values, len(self.hierarchy_levels))
+                self.hierarchy_levels.append(new_level)
+
+        self.update_table_view()
 
     def update_table_view(self):
         self.hierarchy_table_view.setRowCount(len(self.leaf_items))
