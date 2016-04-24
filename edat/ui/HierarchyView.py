@@ -289,15 +289,11 @@ class HierarchyView(QtGui.QMainWindow):
                         combo_box.setCurrentIndex(index)
                         combo_box.blockSignals(False)
 
-    def remove_level(self,level_id):
-        print "REMOVEEEEEEEEEEe  LEVEL: ",level_id
-
-    def on_remove_column(self, n_col):
-        if n_col == 0 or n_col > self.hierarchy_table_view.columnCount():
-            return
-        self.hierarchy_table_view.removeColumn(n_col)
-        self.hierarchy_levels.pop(n_col)
-        self.update_table_view()
+    def remove_level(self, level_id):
+        if level_id != 0:
+            self.hierarchy_table_view.removeColumn(level_id)
+            self.hierarchy_levels.pop(level_id)
+            self.update_table_view()
 
 
 class LoadAttributeValuesThread(QThread):
