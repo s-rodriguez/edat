@@ -37,33 +37,41 @@ class AttributeConfigurationView(QtGui.QFrame):
 
         self.attributes_combo = QtGui.QComboBox()
         self.load_attributes()
-        attr_layout.addRow("Attribute: ", self.attributes_combo)
+        attribute_frame = self.create_horizontal_frame('Attribute', self.attributes_combo)
+        main_layout.addWidget(attribute_frame)
+        #attr_layout.addRow("Attribute: ", self.attributes_combo)
 
         self.category_combo = QtGui.QComboBox()
         self.category_combo.addItems(list(af_manager.privacy_types))
-        attr_layout.addRow("Category: ", self.category_combo)
         self.category_combo.currentIndexChanged['QString'].connect(self.save_attribute_info)
+        category_frame = self.create_horizontal_frame('Category', self.category_combo)
+        main_layout.addWidget(category_frame)
+        #attr_layout.addRow("Category: ", self.category_combo)
 
         self.type_combo = QtGui.QComboBox()
         self.type_combo.addItems(list(af_manager.data_types))
-        attr_layout.addRow("Type: ", self.type_combo)
         self.type_combo.currentIndexChanged['QString'].connect(self.save_attribute_info)
+        type_frame = self.create_horizontal_frame('Type', self.type_combo)
+        main_layout.addWidget(type_frame)
+        #attr_layout.addRow("Type: ", self.type_combo)
 
         self.weight_spin_box = QtGui.QSpinBox()
         self.weight_spin_box.setMaximum(10)
         self.weight_spin_box.setMinimum(0)
         self.weight_spin_box.setSingleStep(1)
         self.weight_spin_box.setValue(5)
-        attr_layout.addRow("Weight", self.weight_spin_box)
         self.weight_spin_box.valueChanged.connect(self.save_attribute_info)
+        weight_frame = self.create_horizontal_frame('Weight', self.weight_spin_box)
+        main_layout.addWidget(weight_frame)
+        #attr_layout.addRow("Weight", self.weight_spin_box)
 
         self.suppression_panel = SuppressionPanel(self.project_controller, self)
         self.generalization_panel = GeneralizationPanel(self.project_controller, self)
+        #attr_layout.addRow(self.suppression_panel, self.generalization_panel)
 
-        attr_layout.addRow(self.suppression_panel, self.generalization_panel)
-        #self.anonymization_panel_2 = AnonymizationPanel2(self.project_controller, self)
+        self.anonymization_panel_2 = AnonymizationPanel2(self.project_controller, self)
+        main_layout.addWidget(self.anonymization_panel_2)
         #attr_layout.addRow(self.anonymization_panel_2)
-
 
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
 
@@ -72,6 +80,17 @@ class AttributeConfigurationView(QtGui.QFrame):
 
         main_layout.addLayout(attr_layout)
         self.setLayout(main_layout)
+
+    @staticmethod
+    def create_horizontal_frame(text, widget):
+        frame = QtGui.QFrame()
+        layout = QtGui.QHBoxLayout()
+        layout.addStretch(1)
+        layout.addWidget(TextUtils.get_caption_styled_text(text), 0, Qt.AlignVCenter)
+        layout.addWidget(widget, 0, Qt.AlignVCenter)
+        layout.addStretch(1)
+        frame.setLayout(layout)
+        return frame
 
     def load_attributes(self):
         if len(self.data_config.attributes_list) == 0:
@@ -129,6 +148,7 @@ class AttributeConfigurationView(QtGui.QFrame):
 
     def enable_anonymization_panels(self, att):
         enabled = att.is_qi_attribute()
+        self.anonymization_panel_2.setEnabled(enabled)
         self.suppression_panel.setEnabled(enabled)
         self.generalization_panel.setEnabled(enabled)
 
