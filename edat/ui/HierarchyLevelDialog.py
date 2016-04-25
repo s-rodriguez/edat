@@ -20,7 +20,7 @@ class HierarchyLevelDialog(QtGui.QDialog):
         main_layout.addLayout(level_name_form_view)
 
         self.level_items_view = QtGui.QListWidget()
-        self.level_items_view.edit
+        self.level_items_view.itemChanged.connect(self.pepe)
         main_layout.addWidget(self.level_items_view)
 
         add_or_remove_item_layout = QtGui.QHBoxLayout()
@@ -93,6 +93,9 @@ class HierarchyLevelDialog(QtGui.QDialog):
 
     def get_level_name(self):
         return str(self.level_name_edit_text.text())
+
+    def pepe(self):
+        self.button_box.button(QtGui.QDialogButtonBox.Ok).setEnabled(self.level_items_view.count() != 0)
 
 
 
