@@ -247,11 +247,13 @@ class HierarchyView(QtGui.QMainWindow):
             self.attribute.hierarchy = new_hierarchy
 
     def open_table_context_menu(self, position):
+        level_id = self.hierarchy_table_view.columnAt(position.x())
+        if level_id < 1:
+            return
         menu = QtGui.QMenu()
         edit_level_action = menu.addAction("Edit Level")
         remove_level_action = menu.addAction("Remove Level")
         action = menu.exec_(self.hierarchy_table_view.mapToGlobal(position))
-        level_id = self.hierarchy_table_view.columnAt(position.x())
         if action == edit_level_action:
             self.edit_level(level_id)
         elif action == remove_level_action:
@@ -259,12 +261,9 @@ class HierarchyView(QtGui.QMainWindow):
 
     def edit_level(self, level_id):
         if level_id != 0:
-            model = self.hierarchy_table_view.model()
-            hierarchy_items = []
-            for row_id in range(model.rowCount()):
-                cell_widget = self.hierarchy_table_view.cellWidget(row_id, level_id)
-                cell_value = str(cell_widget.currentText())
-                hierarchy_items.append(cell_value)
+            hierarchy_items = self.hierarchy_levels[level_id].items
+            if SELECT_VALUE_DEFAULT in hierarchy_items:
+                hierarchy_items.pop(0)
 
             update_level_dialog = HierarchyLevelDialog(set(hierarchy_items), self)
             if update_level_dialog.exec_():
@@ -281,12 +280,14 @@ class HierarchyView(QtGui.QMainWindow):
                     if SELECT_VALUE_DEFAULT not in combo_items:
                         combo_items.insert(0, SELECT_VALUE_DEFAULT)
 
-                    for row_id, item_value in enumerate(hierarchy_items):
+                    model = self.hierarchy_table_view.model()
+                    for row_id in range(model.rowCount()):
                         combo_box = self.hierarchy_table_view.cellWidget(row_id, level_id)
                         combo_box.blockSignals(True)
+                        previous_value = combo_box.currentText()
                         combo_box.clear()
                         combo_box.addItems(combo_items)
-                        index = combo_box.findText(item_value, Qt.MatchFixedString)
+                        index = combo_box.findText(previous_value, Qt.MatchFixedString)
                         if index < 0:
                             index = 0
                         combo_box.setCurrentIndex(index)
