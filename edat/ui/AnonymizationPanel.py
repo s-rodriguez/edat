@@ -116,25 +116,30 @@ class AnonymizationPanel2(QtGui.QFrame):
         self.vertical_layout.addWidget(self.transformation_frame, 0, Qt.AlignVCenter)
 
     def add_hierarchy_related_objects(self):
-        self.hierarchy_frame = QtGui.QFrame()
-        horizontal_layout = QtGui.QHBoxLayout()
+
+        self.status_button = QtGui.QPushButton("status_information")
+        self.status_button.setFlat(True)
+        self.status_button.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.status_button.setStyleSheet('QPushButton {color: blue; text-decoration: underline;}')
+        status_frame = self.create_horizontal_frame(self.status_button)
+        self.vertical_layout.addWidget(status_frame, 0, Qt.AlignVCenter)
 
         self.hierarchy_button = QtGui.QPushButton("Create Hierarchy")
         self.hierarchy_button.clicked.connect(self.create_hierarchy)
-        self.hierarchy_button.setMaximumSize(200, 50)
-        self.hierarchy_button.setStyleSheet('font-size: 18pt; border-width: 2px;')
+        hierarchy_frame = self.create_horizontal_frame(self.hierarchy_button)
+        self.vertical_layout.addWidget(hierarchy_frame, 0, Qt.AlignVCenter)
 
-        self.valid_hierarchy_checkbox = ReadOnlyCheck()
-        self.valid_hierarchy_checkbox.setCheckState(Qt.Checked)
-        self.valid_hierarchy_checkbox.setStyleSheet("QPushButton#DCButton:checked {color: green;")
+    @staticmethod
+    def create_horizontal_frame(widget):
+        frame = QtGui.QFrame()
+        layout = QtGui.QHBoxLayout()
 
-        horizontal_layout.addStretch(1)
-        horizontal_layout.addWidget(self.hierarchy_button)
-        horizontal_layout.addWidget(self.valid_hierarchy_checkbox)
-        horizontal_layout.addStretch(1)
+        layout.addStretch(1)
+        layout.addWidget(widget)
+        layout.addStretch(1)
 
-        self.hierarchy_frame.setLayout(horizontal_layout)
-        self.vertical_layout.addWidget(self.hierarchy_frame, 0, Qt.AlignVCenter)
+        frame.setLayout(layout)
+        return frame
 
     def slider_value_changed(self):
         selected = 'Supression' if self.privacy_slider.value() == 0 else 'Generalization'
@@ -143,4 +148,7 @@ class AnonymizationPanel2(QtGui.QFrame):
             label.setFont(TextUtils.get_caption_text_font(weight=bold_text))
 
     def create_hierarchy(self):
-        print 123123123123
+        if self.privacy_slider.value() == 1:
+            self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute(), self)
+        else:
+            print "Create supression hierarchy for attribute!!"

@@ -35,25 +35,31 @@ class AttributeConfigurationView(QtGui.QFrame):
         attr_layout.setLabelAlignment(Qt.AlignLeft)
         attr_layout.setVerticalSpacing(20)
 
+        grid_frame = QtGui.QFrame()
+        grid_layout = QtGui.QGridLayout()
+        grid_layout.setSpacing(20)
+        row = 0
+
+
         self.attributes_combo = QtGui.QComboBox()
         self.load_attributes()
-        attribute_frame = self.create_horizontal_frame('Attribute', self.attributes_combo)
-        main_layout.addWidget(attribute_frame)
-        #attr_layout.addRow("Attribute: ", self.attributes_combo)
+        grid_layout.addWidget(TextUtils.get_caption_styled_text('Attribute'), row, 0)
+        grid_layout.addWidget(self.attributes_combo, row, 1)
 
         self.category_combo = QtGui.QComboBox()
         self.category_combo.addItems(list(af_manager.privacy_types))
         self.category_combo.currentIndexChanged['QString'].connect(self.save_attribute_info)
-        category_frame = self.create_horizontal_frame('Category', self.category_combo)
-        main_layout.addWidget(category_frame)
-        #attr_layout.addRow("Category: ", self.category_combo)
+        grid_layout.addWidget(TextUtils.get_caption_styled_text('Category'), row, 2)
+        grid_layout.addWidget(self.category_combo, row, 3)
+
+        row += 1
 
         self.type_combo = QtGui.QComboBox()
         self.type_combo.addItems(list(af_manager.data_types))
         self.type_combo.currentIndexChanged['QString'].connect(self.save_attribute_info)
-        type_frame = self.create_horizontal_frame('Type', self.type_combo)
-        main_layout.addWidget(type_frame)
-        #attr_layout.addRow("Type: ", self.type_combo)
+        grid_layout.addWidget(TextUtils.get_caption_styled_text('Type'), row, 0)
+        grid_layout.addWidget(self.type_combo, row, 1)
+
 
         self.weight_spin_box = QtGui.QSpinBox()
         self.weight_spin_box.setMaximum(10)
@@ -61,9 +67,12 @@ class AttributeConfigurationView(QtGui.QFrame):
         self.weight_spin_box.setSingleStep(1)
         self.weight_spin_box.setValue(5)
         self.weight_spin_box.valueChanged.connect(self.save_attribute_info)
-        weight_frame = self.create_horizontal_frame('Weight', self.weight_spin_box)
-        main_layout.addWidget(weight_frame)
-        #attr_layout.addRow("Weight", self.weight_spin_box)
+        grid_layout.addWidget(TextUtils.get_caption_styled_text('Weight'), row, 2)
+        grid_layout.addWidget(self.weight_spin_box, row, 3)
+        row += 1
+
+        grid_frame.setLayout(grid_layout)
+        main_layout.addWidget(grid_frame)
 
         self.suppression_panel = SuppressionPanel(self.project_controller, self)
         self.generalization_panel = GeneralizationPanel(self.project_controller, self)
