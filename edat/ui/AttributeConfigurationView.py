@@ -4,7 +4,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QFormLayout, QFrame
 
 from af.controller.data.DataFactory import DataFactory
-from edat.ui.AnonymizationPanel import SuppressionPanel, GeneralizationPanel, AnonymizationPanel2
+from edat.ui.AnonymizationPanel import AnonymizationPanel
 from edat.utils.ui.TextUtils import TextUtils
 from af.model.algorithms.AfManager import AfManager
 from af.model.Attribute import Attribute
@@ -74,13 +74,8 @@ class AttributeConfigurationView(QtGui.QFrame):
         grid_frame.setLayout(grid_layout)
         main_layout.addWidget(grid_frame)
 
-        self.suppression_panel = SuppressionPanel(self.project_controller, self)
-        self.generalization_panel = GeneralizationPanel(self.project_controller, self)
-        #attr_layout.addRow(self.suppression_panel, self.generalization_panel)
-
-        self.anonymization_panel_2 = AnonymizationPanel2(self.project_controller, self)
-        main_layout.addWidget(self.anonymization_panel_2)
-        #attr_layout.addRow(self.anonymization_panel_2)
+        self.anonymization_panel = AnonymizationPanel(self.project_controller, self)
+        main_layout.addWidget(self.anonymization_panel)
 
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
 
@@ -157,7 +152,4 @@ class AttributeConfigurationView(QtGui.QFrame):
 
     def enable_anonymization_panels(self, att):
         enabled = att.is_qi_attribute()
-        self.anonymization_panel_2.setEnabled(enabled)
-        self.suppression_panel.setEnabled(enabled)
-        self.generalization_panel.setEnabled(enabled)
-
+        self.anonymization_panel.setEnabled(enabled)

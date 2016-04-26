@@ -9,6 +9,8 @@ from PyQt4.QtCore import Qt, SIGNAL
 from af.controller.data.DataFactory import DataFactory
 from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
 from af.exceptions import InvalidValueInHierarchyException
+from af.model.hierarchies.BaseHierarchy import BaseHierarchy
+
 from edat.ui.HierarchyLevelDialog import HierarchyLevelDialog
 import edat.utils.ui as utils_ui
 from edat.utils import strings
@@ -42,7 +44,8 @@ class HierarchyView(QtGui.QMainWindow):
 
         self.add_buttons()
 
-        if self.attribute.hierarchy is None:
+        if self.attribute.hierarchy is None or len(self.attribute.hierarchy.leaf_nodes) == 0 or self.attribute.hierarchy.leaf_nodes[0].value == BaseHierarchy.supression_node().value:
+
             self.load_attributes_values_thread = LoadAttributeValuesThread(self.project_controller, self.attribute)
             self.load_attributes_values_thread.load_attribute_values_finished.connect(self.load_attributes_finished_update)
             self.load_attributes_values_thread.start()
