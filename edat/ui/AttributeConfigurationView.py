@@ -8,7 +8,7 @@ from edat.ui.AnonymizationPanel import AnonymizationPanel
 from edat.utils.ui.TextUtils import TextUtils
 from af.model.algorithms.AfManager import AfManager
 from af.model.Attribute import Attribute
-
+from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
 
 class AttributeConfigurationView(QtGui.QFrame):
 
@@ -134,6 +134,11 @@ class AttributeConfigurationView(QtGui.QFrame):
             if att.name == selected_attribute:
                 att.basic_type = basic_type
                 att.privacy_type = privacy_category
+                if att.is_identifier_attribute():
+                    att.hierarchy = BaseHierarchyController.create_suppression_hierarchy()
+                elif not att.is_qi_attribute():
+                    att.hierarchy = None
+
                 att.weight = weight
                 self.enable_anonymization_panels(att)
                 break
