@@ -5,6 +5,10 @@ from PyQt4.QtGui import QSlider
 from edat.ui.HierarchyView import HierarchyView
 from edat.utils.ui.TextUtils import TextUtils
 
+SUPPRESSION_SLIDER_VALUE = 0
+
+GENERALIZATION_SLIDER_VALUE = 2
+
 
 class AnonymizationPanel(QtGui.QFrame):
 
@@ -20,6 +24,7 @@ class AnonymizationPanel(QtGui.QFrame):
         self.add_generalization_related_objects()
         self.add_suppression_related_objects()
 
+        self.update_view()
         self.setLayout(self.vertical_layout)
 
     def add_transformation_frame(self):
@@ -102,10 +107,10 @@ class AnonymizationPanel(QtGui.QFrame):
 
     def slider_value_changed(self):
         slider_value = self.privacy_slider.value()
-        if slider_value == 0:
+        if slider_value == SUPPRESSION_SLIDER_VALUE:
             selected = 'Supression'
             self.show_suppression_panel()
-        elif slider_value == 2:
+        elif slider_value == GENERALIZATION_SLIDER_VALUE:
             selected = 'Generalization'
             self.show_generalization_panel()
         else:
@@ -115,10 +120,7 @@ class AnonymizationPanel(QtGui.QFrame):
             label.setFont(TextUtils.get_caption_text_font(weight=bold_text))
 
     def create_hierarchy(self):
-        if self.privacy_slider.value() == 1:
-            self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute(), self)
-        else:
-            print "Create supression hierarchy for attribute!!"
+        self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute(), self)
 
     def show_suppression_panel(self):
         self.suppression_frame.show()
@@ -127,3 +129,12 @@ class AnonymizationPanel(QtGui.QFrame):
     def show_generalization_panel(self):
         self.generalization_frame.show()
         self.suppression_frame.hide()
+
+    def update_view(self):
+        current_attribute = self.attribute_view.get_current_attribute()
+        if current_attribute.hierarchy:
+            # TODO: agregar logica para saber si la jerarquia existente se debe a generalizacion o supresion
+            self.privacy_slider.setValue(GENERALIZATION_SLIDER_VALUE)
+        else:
+            self.privacy_slider.setValue(1)
+
