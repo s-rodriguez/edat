@@ -160,3 +160,5 @@ class AttributeConfigurationView(QtGui.QFrame):
         self.anonymization_panel.setEnabled(enabled)
         if enabled:
             self.anonymization_panel.update_view()
+        else:
+            self.anonymization_panel.hide_anonymization_panels()

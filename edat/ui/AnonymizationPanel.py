@@ -5,6 +5,8 @@ from PyQt4.QtGui import QSlider
 from edat.ui.HierarchyView import HierarchyView
 from edat.utils.ui.TextUtils import TextUtils
 
+NO_SELECTED_SLIDER_VALUE = 1
+
 SUPPRESSION_SLIDER_VALUE = 0
 
 GENERALIZATION_SLIDER_VALUE = 2
@@ -38,9 +40,8 @@ class AnonymizationPanel(QtGui.QFrame):
         self.privacy_slider.setMinimum(0)
         self.privacy_slider.setMaximum(2)
         self.privacy_slider.setTickInterval(QSlider.TicksBothSides)
-        self.privacy_slider.setValue(1)
+        self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
         self.privacy_slider.valueChanged.connect(self.slider_value_changed)
-        self.slider_value_changed()
 
         horizontal_layout.addStretch(1)
         horizontal_layout.addWidget(self.supression_label)
@@ -115,6 +116,7 @@ class AnonymizationPanel(QtGui.QFrame):
             self.show_generalization_panel()
         else:
             selected = None
+            self.hide_anonymization_panels()
         for label in (self.supression_label, self.generalization_label):
             bold_text = QtGui.QFont.Bold if selected == label.text() else QtGui.QFont.Normal
             label.setFont(TextUtils.get_caption_text_font(weight=bold_text))
@@ -123,12 +125,22 @@ class AnonymizationPanel(QtGui.QFrame):
         self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute(), self)
 
     def show_suppression_panel(self):
-        self.suppression_frame.show()
-        self.generalization_frame.hide()
+        if self.suppression_frame:
+            self.suppression_frame.show()
+        if self.generalization_frame:
+            self.generalization_frame.hide()
 
     def show_generalization_panel(self):
-        self.generalization_frame.show()
-        self.suppression_frame.hide()
+        if self.generalization_frame:
+           self.generalization_frame.show()
+        if self.suppression_frame:
+            self.suppression_frame.hide()
+
+    def hide_anonymization_panels(self):
+        if self.generalization_frame:
+            self.generalization_frame.hide()
+        if self.suppression_frame:
+            self.suppression_frame.hide()
 
     def update_view(self):
         current_attribute = self.attribute_view.get_current_attribute()
@@ -136,5 +148,5 @@ class AnonymizationPanel(QtGui.QFrame):
             # TODO: agregar logica para saber si la jerarquia existente se debe a generalizacion o supresion
             self.privacy_slider.setValue(GENERALIZATION_SLIDER_VALUE)
         else:
-            self.privacy_slider.setValue(1)
+            self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
 
