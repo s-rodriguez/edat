@@ -17,7 +17,8 @@ class AnonymizationPanel(QtGui.QFrame):
         self.vertical_layout = QtGui.QVBoxLayout()
 
         self.add_transformation_frame()
-        self.add_hierarchy_related_objects()
+        self.add_generalization_related_objects()
+        self.add_suppression_related_objects()
 
         self.setLayout(self.vertical_layout)
 
@@ -30,9 +31,9 @@ class AnonymizationPanel(QtGui.QFrame):
 
         self.privacy_slider = QSlider(Qt.Horizontal)
         self.privacy_slider.setMinimum(0)
-        self.privacy_slider.setMaximum(1)
-        self.privacy_slider.setTickInterval(1)
-        self.privacy_slider.setValue(0)
+        self.privacy_slider.setMaximum(2)
+        self.privacy_slider.setTickInterval(QSlider.TicksBothSides)
+        self.privacy_slider.setValue(1)
         self.privacy_slider.valueChanged.connect(self.slider_value_changed)
         self.slider_value_changed()
 
@@ -45,19 +46,47 @@ class AnonymizationPanel(QtGui.QFrame):
         self.transformation_frame.setLayout(horizontal_layout)
         self.vertical_layout.addWidget(self.transformation_frame, 0, Qt.AlignVCenter)
 
-    def add_hierarchy_related_objects(self):
-
-        self.status_button = QtGui.QPushButton("status_information")
-        self.status_button.setFlat(True)
-        self.status_button.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-        self.status_button.setStyleSheet('QPushButton {color: blue; text-decoration: underline;}')
-        status_frame = self.create_horizontal_frame(self.status_button)
-        self.vertical_layout.addWidget(status_frame, 0, Qt.AlignVCenter)
+    def add_generalization_related_objects(self):
+        self.generalization_frame = QtGui.QFrame()
+        horizontal_layout = QtGui.QHBoxLayout()
+        horizontal_layout.addStretch(1)
 
         self.hierarchy_button = QtGui.QPushButton("Create Hierarchy")
         self.hierarchy_button.clicked.connect(self.create_hierarchy)
-        hierarchy_frame = self.create_horizontal_frame(self.hierarchy_button)
-        self.vertical_layout.addWidget(hierarchy_frame, 0, Qt.AlignVCenter)
+        horizontal_layout.addWidget(self.hierarchy_button)
+
+        self.status_button = QtGui.QPushButton("Hierarchy Status")
+        self.status_button.setFlat(True)
+        self.status_button.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.status_button.setStyleSheet('QPushButton {color: blue; text-decoration: underline;}')
+        horizontal_layout.addWidget(self.status_button)
+        horizontal_layout.addStretch(1)
+
+        self.generalization_frame.setLayout(horizontal_layout)
+        self.generalization_frame.hide()
+        self.vertical_layout.addWidget(self.generalization_frame)
+
+    def add_suppression_related_objects(self):
+        self.suppression_frame = QtGui.QFrame()
+        horizontal_layout = QtGui.QHBoxLayout()
+        horizontal_layout.addStretch(1)
+
+        self.supression_type_label = TextUtils.get_caption_styled_text('Supression Type')
+        horizontal_layout.addWidget(self.supression_type_label)
+
+        self.suppression_type = QtGui.QComboBox()
+        horizontal_layout.addWidget(self.suppression_type)
+
+        self.suppression_info = QtGui.QPushButton("Suppression Information")
+        self.suppression_info.setFlat(True)
+        self.suppression_info.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        self.suppression_info.setStyleSheet('QPushButton {color: blue; text-decoration: underline;}')
+        horizontal_layout.addWidget(self.suppression_info)
+        horizontal_layout.addStretch(1)
+
+        self.suppression_frame.setLayout(horizontal_layout)
+        self.suppression_frame.hide()
+        self.vertical_layout.addWidget(self.suppression_frame)
 
     @staticmethod
     def create_horizontal_frame(widget):
@@ -72,7 +101,15 @@ class AnonymizationPanel(QtGui.QFrame):
         return frame
 
     def slider_value_changed(self):
-        selected = 'Supression' if self.privacy_slider.value() == 0 else 'Generalization'
+        slider_value = self.privacy_slider.value()
+        if slider_value == 0:
+            selected = 'Supression'
+            self.show_suppression_panel()
+        elif slider_value == 2:
+            selected = 'Generalization'
+            self.show_generalization_panel()
+        else:
+            selected = None
         for label in (self.supression_label, self.generalization_label):
             bold_text = QtGui.QFont.Bold if selected == label.text() else QtGui.QFont.Normal
             label.setFont(TextUtils.get_caption_text_font(weight=bold_text))
@@ -82,3 +119,11 @@ class AnonymizationPanel(QtGui.QFrame):
             self.hierarchy_view = HierarchyView(self.project_controller, self.attribute_view.get_current_attribute(), self)
         else:
             print "Create supression hierarchy for attribute!!"
+
+    def show_suppression_panel(self):
+        self.suppression_frame.show()
+        self.generalization_frame.hide()
+
+    def show_generalization_panel(self):
+        self.generalization_frame.show()
+        self.suppression_frame.hide()
