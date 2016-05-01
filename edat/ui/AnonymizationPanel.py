@@ -2,6 +2,8 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QSlider
 
+from af.model.AfManager import AfManager
+
 from edat.ui.HierarchyView import HierarchyView
 from edat.utils.ui.TextUtils import TextUtils
 
@@ -16,6 +18,7 @@ class AnonymizationPanel(QtGui.QFrame):
 
     def __init__(self, project_controller, attribute_view):
         super(QtGui.QFrame, self).__init__()
+        self.af_manager = AfManager()
 
         self.attribute_view = attribute_view
         self.project_controller = project_controller
@@ -80,8 +83,9 @@ class AnonymizationPanel(QtGui.QFrame):
         self.supression_type_label = TextUtils.get_caption_styled_text('Supression Type')
         horizontal_layout.addWidget(self.supression_type_label)
 
-        self.suppression_type = QtGui.QComboBox()
-        horizontal_layout.addWidget(self.suppression_type)
+        self.automatic_dimensions_combo = QtGui.QComboBox()
+        self.refresh_automatic_dimensions()
+        horizontal_layout.addWidget(self.automatic_dimensions_combo)
 
         self.suppression_info = QtGui.QPushButton("Suppression Information")
         self.suppression_info.setFlat(True)
@@ -150,3 +154,8 @@ class AnonymizationPanel(QtGui.QFrame):
         else:
             self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
 
+    def refresh_automatic_dimensions(self):
+        current_attribute = self.attribute_view.get_current_attribute()
+        dimensions = self.af_manager.get_automatic_dimensions_names(current_attribute.basic_type)
+        self.automatic_dimensions_combo.clear()
+        self.automatic_dimensions_combo.addItems(dimensions)

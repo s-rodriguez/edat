@@ -124,6 +124,8 @@ class AttributeConfigurationView(QtGui.QFrame):
                 self.enable_anonymization_panels(att)
                 break
 
+        self.anonymization_panel.refresh_automatic_dimensions()
+
     def save_attribute_info(self, text):
         selected_attribute = str(self.attributes_combo.currentText())
         basic_type = str(self.type_combo.currentText())
@@ -143,6 +145,7 @@ class AttributeConfigurationView(QtGui.QFrame):
                 self.enable_anonymization_panels(att)
                 break
 
+        self.anonymization_panel.refresh_automatic_dimensions()
 
     @staticmethod
     def block_objects_signals(objects_list, block=True):
