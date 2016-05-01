@@ -5,7 +5,7 @@ from PyQt4.QtGui import QFormLayout, QFrame, QLineEdit, QLabel
 
 import edat.utils.ui as utils_ui
 from edat.utils.ui.TextUtils import TextUtils
-from af.model.algorithms.AfManager import AfManager
+from af.model.AfManager import AfManager
 
 
 class PrivacyModelConfigurationView(QtGui.QFrame):

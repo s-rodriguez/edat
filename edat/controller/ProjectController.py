@@ -1,6 +1,6 @@
 import os
 
-from af.model.algorithms.AfManager import AfManager
+from af.model.AfManager import AfManager
 from af.utils import EDAT_PROJECT_EXTENSION, CONFIG_EXTENSION
 from af.exceptions import InfoException, ImportException
 from edat.model.Project import Project

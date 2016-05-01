@@ -6,7 +6,7 @@ from PyQt4.QtGui import QFormLayout, QFrame
 from af.controller.data.DataFactory import DataFactory
 from edat.ui.AnonymizationPanel import AnonymizationPanel
 from edat.utils.ui.TextUtils import TextUtils
-from af.model.algorithms.AfManager import AfManager
+from af.model.AfManager import AfManager
 from af.model.Attribute import Attribute
 from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
 
