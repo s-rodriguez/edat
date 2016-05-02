@@ -1,10 +1,12 @@
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QSlider
+from PyQt4.QtWebKit import QWebView
 
 from af.model.AfManager import AfManager
 
 from edat.ui.HierarchyView import HierarchyView
+from edat.ui.HierarchyDisplayView import HierarchyDisplayView
 from edat.utils.ui.TextUtils import TextUtils
 
 NO_SELECTED_SLIDER_VALUE = 1
@@ -68,6 +70,7 @@ class AnonymizationPanel(QtGui.QFrame):
         self.status_button_generalization.setFlat(True)
         self.status_button_generalization.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.status_button_generalization.setStyleSheet('QPushButton {color: blue; text-decoration: underline;}')
+        self.status_button_generalization.clicked.connect(self.display_hierarchy)
         horizontal_layout.addWidget(self.status_button_generalization)
         horizontal_layout.addStretch(1)
 
@@ -101,6 +104,7 @@ class AnonymizationPanel(QtGui.QFrame):
         self.status_button_automatic_dimension.setFlat(True)
         self.status_button_automatic_dimension.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.status_button_automatic_dimension.setStyleSheet('QPushButton {color: blue; text-decoration: underline;}')
+        self.status_button_automatic_dimension.clicked.connect(self.display_hierarchy)
         horizontal_layout.addWidget(self.status_button_automatic_dimension)
         horizontal_layout.addStretch(1)
 
@@ -180,3 +184,8 @@ class AnonymizationPanel(QtGui.QFrame):
     def create_automatic_hierarchy(self):
         # TODO: connect automatic dimension with base hierarchy controller and create hierarchy
         pass
+
+    def display_hierarchy(self):
+        current_attribute = self.attribute_view.get_current_attribute()
+        if current_attribute.hierarchy is not None:
+            hierarchy_display = HierarchyDisplayView(current_attribute, self)
