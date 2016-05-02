@@ -26,4 +26,12 @@ class HierarchyDisplayView(QtGui.QMainWindow):
 
         self.resize(400, 250)
         self.setWindowTitle('%s Hierarchy' % self.attribute.name)
+
+        self.center()
         self.show()
+
+    def center(self):
+        frameGm = self.frameGeometry()
+        centerPoint = QtGui.QDesktopWidget().availableGeometry().center()
+        frameGm.moveCenter(centerPoint)
+        self.move(frameGm.topLeft())
