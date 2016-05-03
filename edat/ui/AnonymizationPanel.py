@@ -3,14 +3,18 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import (
     Qt,
 )
-from PyQt4.QtGui import QSlider
+from PyQt4.QtGui import (
+    QMessageBox,
+    QSlider,
+)
 
 from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
 from af.model.AfManager import AfManager
 from edat.ui.HierarchyDisplayView import HierarchyDisplayView
 from edat.ui.HierarchyView import HierarchyView
-from edat.utils.ui.TextUtils import TextUtils
 from edat.ui.LoadAttributeValuesThread import LoadAttributeValuesThread
+from edat.utils.ui.TextUtils import TextUtils
+import edat.utils.ui as utils_ui
 
 NO_SELECTED_SLIDER_VALUE = 1
 
@@ -200,6 +204,14 @@ class AnonymizationPanel(QtGui.QFrame):
         self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
 
     def load_attributes_finished_update(self, values):
+        # TODO: handle error and show error dialog
         current_attribute = self.attribute_view.get_current_attribute()
         hierarchy_controller = BaseHierarchyController()
         current_attribute.hierarchy = hierarchy_controller.create_automatic_dimension_hierarchy(str(self.automatic_dimensions_combo.currentText()), None, values)
+        title = 'Finished'
+        text_message = 'Hierarchy Created!'
+        icon = QMessageBox.Information
+
+        msg_box = utils_ui.create_message_box(title, text_message, icon)
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.exec_()
