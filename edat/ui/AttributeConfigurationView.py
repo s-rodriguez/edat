@@ -164,4 +164,5 @@ class AttributeConfigurationView(QtGui.QFrame):
         if enabled:
             self.anonymization_panel.update_view()
         else:
+            self.anonymization_panel.reset_slider()
             self.anonymization_panel.hide_anonymization_panels()

@@ -170,6 +170,8 @@ class AnonymizationPanel(QtGui.QFrame):
         else:
             self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
 
+        self.slider_value_changed()
+
     def refresh_automatic_dimensions(self):
         current_attribute = self.attribute_view.get_current_attribute()
         dimensions = self.af_manager.get_automatic_dimensions_names(current_attribute.basic_type)
@@ -189,3 +191,6 @@ class AnonymizationPanel(QtGui.QFrame):
         current_attribute = self.attribute_view.get_current_attribute()
         if current_attribute.hierarchy is not None:
             hierarchy_display = HierarchyDisplayView(current_attribute, self)
+
+    def reset_slider(self):
+        self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
