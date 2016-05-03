@@ -172,8 +172,10 @@ class AnonymizationPanel(QtGui.QFrame):
     def update_view(self):
         current_attribute = self.attribute_view.get_current_attribute()
         if current_attribute.hierarchy:
-            # TODO: agregar logica para saber si la jerarquia existente se debe a generalizacion o supresion
-            self.privacy_slider.setValue(GENERALIZATION_SLIDER_VALUE)
+            if current_attribute.hierarchy.is_generalization_hierarchy():
+                self.privacy_slider.setValue(GENERALIZATION_SLIDER_VALUE)
+            else:
+                self.privacy_slider.setValue(SUPPRESSION_SLIDER_VALUE)
         else:
             self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
 
