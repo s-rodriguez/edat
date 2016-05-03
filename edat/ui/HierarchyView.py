@@ -1,20 +1,14 @@
 from PyQt4 import QtGui
 
-from PyQt4.QtCore import (
-    QThread,
-    pyqtSignal,
-)
-from PyQt4.QtCore import Qt, SIGNAL
+from PyQt4.QtCore import Qt
 
-from af.controller.data.DataFactory import DataFactory
+import edat.utils.ui as utils_ui
 from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
 from af.exceptions import InvalidValueInHierarchyException
 from af.model.hierarchies.BaseHierarchy import BaseHierarchy
-
 from edat.ui.HierarchyLevelDialog import HierarchyLevelDialog
-import edat.utils.ui as utils_ui
 from edat.utils import strings
-
+from edat.ui.LoadAttributeValuesThread import LoadAttributeValuesThread
 
 SELECT_VALUE_DEFAULT = "-- Select a value --"
 
@@ -298,27 +292,6 @@ class HierarchyView(QtGui.QMainWindow):
             self.hierarchy_table_view.removeColumn(level_id)
             self.hierarchy_levels.pop(level_id)
             self.update_table_view()
-
-
-class LoadAttributeValuesThread(QThread):
-
-    load_attribute_values_finished = pyqtSignal(list)
-
-    def __init__(self, project_controller, attribute):
-        QThread.__init__(self)
-        self.project_controller = project_controller
-        self.attribute = attribute
-
-    def __del__(self):
-        self.wait()
-
-    def run(self):
-        controller = DataFactory.create_controller(self.project_controller.project.data_config.location, self.project_controller.project.data_config.type)
-        values = []
-        for value in controller.get_distinct_qi_values(self.project_controller.project.data_config.table,
-                                                               self.attribute.name):
-            values.append(str(value))
-        self.load_attribute_values_finished.emit(values)
 
 
 class HierachyLevel:

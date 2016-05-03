@@ -1,13 +1,16 @@
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
+
+from PyQt4.QtCore import (
+    Qt,
+)
 from PyQt4.QtGui import QSlider
-from PyQt4.QtWebKit import QWebView
 
+from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
 from af.model.AfManager import AfManager
-
-from edat.ui.HierarchyView import HierarchyView
 from edat.ui.HierarchyDisplayView import HierarchyDisplayView
+from edat.ui.HierarchyView import HierarchyView
 from edat.utils.ui.TextUtils import TextUtils
+from edat.ui.LoadAttributeValuesThread import LoadAttributeValuesThread
 
 NO_SELECTED_SLIDER_VALUE = 1
 
@@ -182,10 +185,16 @@ class AnonymizationPanel(QtGui.QFrame):
         self.suppression_info.setToolTip('' if ad_description is None else ad_description)
 
     def create_automatic_hierarchy(self):
-        # TODO: connect automatic dimension with base hierarchy controller and create hierarchy
-        pass
+        self.load_attributes_values_thread = LoadAttributeValuesThread(self.project_controller, self.attribute_view.get_current_attribute())
+        self.load_attributes_values_thread.load_attribute_values_finished.connect(self.load_attributes_finished_update)
+        self.load_attributes_values_thread.start()
 
     def display_hierarchy(self):
         current_attribute = self.attribute_view.get_current_attribute()
         if current_attribute.hierarchy is not None:
             hierarchy_display = HierarchyDisplayView(current_attribute, self)
+
+    def load_attributes_finished_update(self, values):
+        current_attribute = self.attribute_view.get_current_attribute()
+        hierarchy_controller = BaseHierarchyController()
+        current_attribute.hierarchy = hierarchy_controller.create_automatic_dimension_hierarchy(str(self.automatic_dimensions_combo.currentText()), None, values)
