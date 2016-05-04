@@ -1,6 +1,7 @@
 from PyQt4 import QtGui
 
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QMessageBox
 
 import edat.utils.ui as utils_ui
 from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
@@ -239,6 +240,18 @@ class HierarchyView(QtGui.QMainWindow):
 
             new_hierarchy = BaseHierarchyController.create_hierarchy_from_list_of_values(rows)
             self.attribute.hierarchy = new_hierarchy
+            self.show_hierarchy_created_dialog()
+            self.close()
+
+    @staticmethod
+    def show_hierarchy_created_dialog():
+        title = 'Finished'
+        text_message = 'Hierarchy Created!'
+        icon = QMessageBox.Information
+
+        msg_box = utils_ui.create_message_box(title, text_message, icon)
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.exec_()
 
     def open_table_context_menu(self, position):
         level_id = self.hierarchy_table_view.columnAt(position.x())
