@@ -50,7 +50,7 @@ class AnonymizationPanel(QtGui.QFrame):
         self.transformation_frame = QtGui.QFrame()
         horizontal_layout = QtGui.QHBoxLayout()
 
-        self.supression_label = TextUtils.get_caption_styled_text('Supression')
+        self.supression_label = TextUtils.get_caption_styled_text('Suppression')
         self.generalization_label = TextUtils.get_caption_styled_text('Generalization')
 
         self.privacy_slider = QSlider(Qt.Horizontal)
@@ -95,7 +95,7 @@ class AnonymizationPanel(QtGui.QFrame):
         horizontal_layout = QtGui.QHBoxLayout()
         horizontal_layout.addStretch(1)
 
-        self.supression_type_label = TextUtils.get_caption_styled_text('Supression Type')
+        self.supression_type_label = TextUtils.get_caption_styled_text('Suppression Type')
         horizontal_layout.addWidget(self.supression_type_label)
 
         self.automatic_dimensions_combo = QtGui.QComboBox()
@@ -142,7 +142,7 @@ class AnonymizationPanel(QtGui.QFrame):
         slider_value = self.privacy_slider.value()
         current_attribute = self.attribute_view.get_current_attribute()
         if slider_value == SUPPRESSION_SLIDER_VALUE:
-            selected = 'Supression'
+            selected = 'Suppression'
             if current_attribute.hierarchy and current_attribute.hierarchy.hierarchy_type == HIERARCHY_TYPE_GENERALIZATION:
                 current_attribute.hierarchy = None
             self.show_suppression_panel()
