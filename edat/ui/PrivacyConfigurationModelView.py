@@ -48,8 +48,7 @@ class PrivacyModelConfigurationView(QtGui.QFrame):
         self.privacy_model_combo = QtGui.QComboBox()
         self.privacy_model_combo.addItems(list(self.af_manager.privacy_models))
         self.privacy_model_combo.currentIndexChanged['QString'].connect(self.refresh_algorithms)
-        title = QLabel('Privacy Model: ')
-        self.model_and_algoritms_layout.addWidget(title)
+        self.model_and_algoritms_layout.addWidget(TextUtils.get_caption_styled_text('Privacy Model'))
         self.model_and_algoritms_layout.addWidget(self.privacy_model_combo)
 
     def add_model_algorithms(self):
@@ -57,8 +56,7 @@ class PrivacyModelConfigurationView(QtGui.QFrame):
         algorithms = self.af_manager.get_algorithms(str(self.privacy_model_combo.currentText()))
         self.algorithm_combo.addItems(list(algorithms))
         self.algorithm_combo.currentIndexChanged['QString'].connect(self.refresh_arguments)
-        title = QLabel('Model Algorithm: ')
-        self.model_and_algoritms_layout.addWidget(title)
+        self.model_and_algoritms_layout.addWidget(TextUtils.get_caption_styled_text('Algorithm'))
         self.model_and_algoritms_layout.addWidget(self.algorithm_combo)
 
     def refresh_algorithms(self, model_selected):
