@@ -222,7 +222,10 @@ class AnonymizationPanel(QtGui.QFrame):
         # TODO: handle error and show error dialog
         current_attribute = self.attribute_view.get_current_attribute()
         hierarchy_controller = BaseHierarchyController()
-        current_attribute.hierarchy = hierarchy_controller.create_automatic_dimension_hierarchy(str(self.automatic_dimensions_combo.currentText()), None, values)
+
+        # TODO: get automatic dimension params from ui
+        automatic_dimension_params = {}
+        current_attribute.hierarchy = hierarchy_controller.create_automatic_dimension_hierarchy(str(self.automatic_dimensions_combo.currentText()), automatic_dimension_params, values)
         title = 'Finished'
         text_message = 'Hierarchy Created!'
         icon = QMessageBox.Information
