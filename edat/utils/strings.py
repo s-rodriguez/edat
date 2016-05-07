@@ -7,6 +7,9 @@ CREATE_HIERARCHY_ITEM_ERROR = "Create hierarchy item error"
 
 EXPORT_CONFIG_ERROR = "Could not export configuration"
 
+HIERARCHY_NOT_CREATED = "There is no hierarchy created for this attribute"
+HIERARCHY_STATUS = "Hierarchy Status"
+
 IMPORT_DB_WIZARD = 'Import DB Wizard'
 IMPORT_PROJECT = 'Import Project'
 IMPORT_PROJECT_ERROR = "Import Project Error"

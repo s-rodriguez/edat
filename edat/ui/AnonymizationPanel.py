@@ -15,6 +15,7 @@ from edat.ui.HierarchyView import HierarchyView
 from edat.ui.LoadAttributeValuesThread import LoadAttributeValuesThread
 from edat.utils.ui.TextUtils import TextUtils
 import edat.utils.ui as utils_ui
+from edat.utils import strings
 
 NO_SELECTED_SLIDER_VALUE = 1
 
@@ -200,7 +201,9 @@ class AnonymizationPanel(QtGui.QFrame):
     def display_hierarchy(self):
         current_attribute = self.attribute_view.get_current_attribute()
         if current_attribute.hierarchy is not None:
-            hierarchy_display = HierarchyDisplayView(current_attribute, self)
+            HierarchyDisplayView(current_attribute, self)
+        else:
+            utils_ui.showMessageAlertBox(parent=self, title=strings.HIERARCHY_STATUS, message=strings.HIERARCHY_NOT_CREATED)
 
     def reset_slider(self):
         self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
