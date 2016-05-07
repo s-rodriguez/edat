@@ -15,9 +15,6 @@ class AbstractDataTableView(QtGui.QTableView):
         self.setAlternatingRowColors(True)
         self.setVisible(False)
 
-        #TODO review which of the following to use when sizing the table
-        self.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
 
