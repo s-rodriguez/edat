@@ -48,7 +48,7 @@ class AttributeConfigurationView(QtGui.QFrame):
 
         self.category_combo = QtGui.QComboBox()
         self.category_combo.addItems(list(af_manager.privacy_types))
-        self.category_combo.currentIndexChanged['QString'].connect(self.save_attribute_info)
+        self.category_combo.currentIndexChanged['QString'].connect(self.on_attribute_category_changed)
         grid_layout.addWidget(TextUtils.get_caption_styled_text('Category'), row, 2)
         grid_layout.addWidget(self.category_combo, row, 3)
 
@@ -56,7 +56,7 @@ class AttributeConfigurationView(QtGui.QFrame):
 
         self.type_combo = QtGui.QComboBox()
         self.type_combo.addItems(list(af_manager.data_types))
-        self.type_combo.currentIndexChanged['QString'].connect(self.save_attribute_info)
+        self.type_combo.currentIndexChanged['QString'].connect(self.on_attribute_type_changed)
         grid_layout.addWidget(TextUtils.get_caption_styled_text('Type'), row, 0)
         grid_layout.addWidget(self.type_combo, row, 1)
 
@@ -66,7 +66,7 @@ class AttributeConfigurationView(QtGui.QFrame):
         self.weight_spin_box.setMinimum(0)
         self.weight_spin_box.setSingleStep(1)
         self.weight_spin_box.setValue(5)
-        self.weight_spin_box.valueChanged.connect(self.save_attribute_info)
+        self.weight_spin_box.valueChanged.connect(self.on_attribute_weight_changed)
         grid_layout.addWidget(TextUtils.get_caption_styled_text('Weight'), row, 2)
         grid_layout.addWidget(self.weight_spin_box, row, 3)
         row += 1
@@ -126,26 +126,31 @@ class AttributeConfigurationView(QtGui.QFrame):
 
         self.anonymization_panel.refresh_automatic_dimensions()
 
-    def save_attribute_info(self, text):
-        selected_attribute = str(self.attributes_combo.currentText())
-        basic_type = str(self.type_combo.currentText())
-        privacy_category = str(self.category_combo.currentText())
-        weight = self.weight_spin_box.value()
+    def on_attribute_category_changed(self):
+        att = self.get_selected_attribute()
+        att.privacy_type = str(self.category_combo.currentText())
+        if att.is_identifier_attribute():
+            att.hierarchy = BaseHierarchyController.create_suppression_hierarchy()
+        else:
+            att.hierarchy = None
+        self.enable_anonymization_panels(att)
 
+    def on_attribute_type_changed(self):
+        att = self.get_selected_attribute()
+        basic_type = str(self.type_combo.currentText())
+        att.basic_type = basic_type
+        self.anonymization_panel.refresh_automatic_dimensions()
+
+    def on_attribute_weight_changed(self):
+        att = self.get_selected_attribute()
+        weight = self.weight_spin_box.value()
+        att.weight = weight
+
+    def get_selected_attribute(self):
+        selected_attribute = str(self.attributes_combo.currentText())
         for att in self.data_config.attributes_list:
             if att.name == selected_attribute:
-                att.basic_type = basic_type
-                att.privacy_type = privacy_category
-                if att.is_identifier_attribute():
-                    att.hierarchy = BaseHierarchyController.create_suppression_hierarchy()
-                elif not att.is_qi_attribute():
-                    att.hierarchy = None
-
-                att.weight = weight
-                self.enable_anonymization_panels(att)
-                break
-
-        self.anonymization_panel.refresh_automatic_dimensions()
+                return att
 
     @staticmethod
     def block_objects_signals(objects_list, block=True):
