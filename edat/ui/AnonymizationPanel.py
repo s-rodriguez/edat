@@ -10,16 +10,18 @@ from PyQt4.QtGui import (
 
 from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyController
 from af.model.AfManager import AfManager
+from af.utils import (
+    HIERARCHY_TYPE_SUPPRESSION,
+    HIERARCHY_TYPE_GENERALIZATION,
+)
+
 from edat.ui.HierarchyDisplayView import HierarchyDisplayView
 from edat.ui.HierarchyView import HierarchyView
 from edat.ui.LoadAttributeValuesThread import LoadAttributeValuesThread
 from edat.utils.ui.TextUtils import TextUtils
 import edat.utils.ui as utils_ui
 from edat.utils import strings
-from af.utils import (
-    HIERARCHY_TYPE_SUPPRESSION,
-    HIERARCHY_TYPE_GENERALIZATION,
-)
+
 
 NO_SELECTED_SLIDER_VALUE = 1
 
@@ -92,35 +94,51 @@ class AnonymizationPanel(QtGui.QFrame):
 
     def add_suppression_related_objects(self):
         self.suppression_frame = QtGui.QFrame()
-        horizontal_layout = QtGui.QHBoxLayout()
-        horizontal_layout.addStretch(1)
+        v_layout = QtGui.QVBoxLayout(self.suppression_frame)
+
+        frame_1 = QtGui.QFrame()
+        horizontal_layout_1 = QtGui.QHBoxLayout(frame_1)
+        horizontal_layout_1.addStretch(1)
 
         self.supression_type_label = TextUtils.get_caption_styled_text('Suppression Type')
-        horizontal_layout.addWidget(self.supression_type_label)
+        self.supression_type_label = QtGui.QLabel("Suppression Type")
+        horizontal_layout_1.addWidget(self.supression_type_label)
 
         self.automatic_dimensions_combo = QtGui.QComboBox()
-        self.automatic_dimensions_combo.currentIndexChanged['QString'].connect(self.refresh_ad_description)
-        horizontal_layout.addWidget(self.automatic_dimensions_combo)
+        self.automatic_dimensions_combo.currentIndexChanged['QString'].connect(self.refresh_ad_info)
+        horizontal_layout_1.addWidget(self.automatic_dimensions_combo)
 
         self.suppression_info = QtGui.QLabel("?")
         self.suppression_info.setStyleSheet('QLabel {color: blue; text-decoration: underline;}')
-        horizontal_layout.addWidget(self.suppression_info)
+        horizontal_layout_1.addWidget(self.suppression_info)
 
-        horizontal_layout.addStretch(1)
+        self.ad_arguments_frame = QtGui.QFrame()
+        self.ad_arguments_layout = QtGui.QGridLayout(self.ad_arguments_frame)
+
+        horizontal_layout_1.addWidget(self.ad_arguments_frame)
+
+        horizontal_layout_1.addStretch(1)
+
+        v_layout.addWidget(frame_1)
+
+        frame_2 = QtGui.QFrame()
+        horizontal_layout_2 = QtGui.QHBoxLayout(frame_2)
+        horizontal_layout_2.addStretch(1)
 
         self.supression_button = QtGui.QPushButton("Create Hierarchy")
         self.supression_button.clicked.connect(self.create_automatic_hierarchy)
-        horizontal_layout.addWidget(self.supression_button)
+        horizontal_layout_2.addWidget(self.supression_button)
 
         self.status_button_automatic_dimension = QtGui.QPushButton("Hierarchy Status")
         self.status_button_automatic_dimension.setFlat(True)
         self.status_button_automatic_dimension.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.status_button_automatic_dimension.setStyleSheet('QPushButton {color: blue; text-decoration: underline;}')
         self.status_button_automatic_dimension.clicked.connect(self.display_hierarchy)
-        horizontal_layout.addWidget(self.status_button_automatic_dimension)
-        horizontal_layout.addStretch(1)
+        horizontal_layout_2.addWidget(self.status_button_automatic_dimension)
+        horizontal_layout_2.addStretch(1)
 
-        self.suppression_frame.setLayout(horizontal_layout)
+        v_layout.addWidget(frame_2)
+
         self.suppression_frame.hide()
         self.vertical_layout.addWidget(self.suppression_frame)
 
@@ -199,10 +217,26 @@ class AnonymizationPanel(QtGui.QFrame):
         self.automatic_dimensions_combo.clear()
         self.automatic_dimensions_combo.addItems(dimensions)
 
-    def refresh_ad_description(self):
+    def refresh_ad_info(self):
+        # Refresh Automatic Dimension Description Tooltip
         ad_selected = str(self.automatic_dimensions_combo.currentText())
         ad_description = self.af_manager.get_automatic_dimension_description(ad_selected)
         self.suppression_info.setToolTip('' if ad_description is None else ad_description)
+
+        # Refresh Automatic Dimension Arguments
+        ad_parameters = self.af_manager.get_automatic_dimension_parameters(ad_selected)
+        if ad_parameters is not None:
+            utils_ui.clean_layout(self.ad_arguments_layout)
+            amount_of_parameters = len(ad_parameters)
+            amount_of_rows = (amount_of_parameters+1)/2
+            positions = [(row, col) for row  in range(amount_of_rows) for col in range(0,4,2)]
+            for position, parameter in zip(positions, ad_parameters):
+                self.ad_arguments_layout.addWidget(QtGui.QLabel(parameter), position[0], position[1])
+                self.ad_arguments_layout.addWidget(QtGui.QLineEdit(), position[0], position[1]+1)
+            self.ad_arguments_frame.show()
+        else:
+            self.ad_arguments_frame.hide()
+
 
     def create_automatic_hierarchy(self):
         self.load_attributes_values_thread = LoadAttributeValuesThread(self.project_controller, self.attribute_view.get_current_attribute())
