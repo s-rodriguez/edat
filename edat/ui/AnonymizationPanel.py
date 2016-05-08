@@ -140,20 +140,21 @@ class AnonymizationPanel(QtGui.QFrame):
 
     def slider_value_changed(self):
         slider_value = self.privacy_slider.value()
-        current_attribute = self.attribute_view.get_current_attribute()
+        attribute = self.attribute_view.get_current_attribute()
         if slider_value == SUPPRESSION_SLIDER_VALUE:
             selected = 'Suppression'
-            if current_attribute.hierarchy and current_attribute.hierarchy.hierarchy_type == HIERARCHY_TYPE_GENERALIZATION:
-                current_attribute.hierarchy = None
+            if attribute.hierarchy and attribute.hierarchy.hierarchy_type == HIERARCHY_TYPE_GENERALIZATION:
+                attribute.hierarchy = None
             self.show_suppression_panel()
         elif slider_value == GENERALIZATION_SLIDER_VALUE:
-            if current_attribute.hierarchy and current_attribute.hierarchy.hierarchy_type == HIERARCHY_TYPE_SUPPRESSION:
-                current_attribute.hierarchy = None
+            if attribute.hierarchy and attribute.hierarchy.hierarchy_type == HIERARCHY_TYPE_SUPPRESSION:
+                attribute.hierarchy = None
             selected = 'Generalization'
             self.show_generalization_panel()
         else:
             selected = None
-            current_attribute.hierarchy = None
+            if attribute.is_qi_attribute():
+                attribute.hierarchy = None
             self.hide_anonymization_panels()
         for label in (self.supression_label, self.generalization_label):
             bold_text = QtGui.QFont.Bold if selected == label.text() else QtGui.QFont.Normal
