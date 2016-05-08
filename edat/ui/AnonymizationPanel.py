@@ -254,21 +254,29 @@ class AnonymizationPanel(QtGui.QFrame):
         self.privacy_slider.setValue(NO_SELECTED_SLIDER_VALUE)
 
     def load_attributes_finished_update(self, values):
-        # TODO: handle error and show error dialog
-        current_attribute = self.attribute_view.get_current_attribute()
-        hierarchy_controller = BaseHierarchyController()
+        try:
+            current_attribute = self.attribute_view.get_current_attribute()
+            hierarchy_controller = BaseHierarchyController()
+            automatic_dimension_params = {}
+            for i in range(0, self.ad_arguments_layout.count(), 2):
+                parameter_value = str(self.ad_arguments_layout.itemAt(i+1).widget().text())
+                if len(parameter_value) > 0:
+                    parameter_name = str(self.ad_arguments_layout.itemAt(i).widget().text())
+                    automatic_dimension_params[parameter_name] = parameter_value
 
-        automatic_dimension_params = {}
-        for i in range(0, self.ad_arguments_layout.count(), 2):
-            parameter_name = str(self.ad_arguments_layout.itemAt(i).widget().text())
-            parameter_value = str(self.ad_arguments_layout.itemAt(i+1).widget().text())
-            automatic_dimension_params[parameter_name] = parameter_value
+            current_attribute.hierarchy = hierarchy_controller.create_automatic_dimension_hierarchy(str(self.automatic_dimensions_combo.currentText()), automatic_dimension_params, values)
 
-        current_attribute.hierarchy = hierarchy_controller.create_automatic_dimension_hierarchy(str(self.automatic_dimensions_combo.currentText()), automatic_dimension_params, values)
-        title = 'Finished'
-        text_message = 'Hierarchy Created!'
-        icon = QMessageBox.Information
+            title = 'Finished'
+            text_message = 'Hierarchy Created!'
+            icon = QMessageBox.Information
+            detailed_text = ''
+        except Exception, e:
+            title = 'An error occured!'
+            text_message = 'An error occured while creating the hierarchy'
+            icon = QMessageBox.Critical
+            detailed_text = e.message
 
         msg_box = utils_ui.create_message_box(title, text_message, icon)
         msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.setDetailedText(detailed_text)
         msg_box.exec_()
