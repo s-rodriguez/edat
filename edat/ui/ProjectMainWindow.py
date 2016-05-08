@@ -44,15 +44,17 @@ from edat.utils import strings
 
 class ProjectMainWindow(QMainWindow):
 
-    def __init__(self, main_ui_controller):
-        super(ProjectMainWindow, self).__init__()
+    def __init__(self, main_ui_controller, parent=None):
+        super(QMainWindow, self).__init__(parent)
+
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.main_ui_controller = main_ui_controller
         self.project_controller = self.main_ui_controller.get_project_controller()
 
-        self.menu = EdatMenuBar(self)
+        self.menu = EdatMenuBar(self, self)
 
-        self.tab_widget = QTabWidget()
+        self.tab_widget = QTabWidget(self)
 
         self.create_input_and_configuration_tab()
         self.create_output_and_metrics_tab()
@@ -181,15 +183,15 @@ class ProjectMainWindow(QMainWindow):
 
     def update_attribute_view(self):
         utils_ui.clean_layout(self.configuration_layout)
-        self.attribute_configuration_view = AttributeConfigurationView(self.project_controller)
+        self.attribute_configuration_view = AttributeConfigurationView(self.project_controller, self)
         self.configuration_layout.addWidget(self.attribute_configuration_view)
 
     def update_privacy_model_configuration_view(self):
-        self.privacy_model_configuration_view = PrivacyModelConfigurationView()
+        self.privacy_model_configuration_view = PrivacyModelConfigurationView(self)
         self.configuration_layout.addWidget(self.privacy_model_configuration_view)
 
     def update_anonymize_view(self):
-        self.anonymize_frame_log_view = AnonymizeFrameLogView(self.handle_anonymize_button)
+        self.anonymize_frame_log_view = AnonymizeFrameLogView(self.handle_anonymize_button, self)
         self.configuration_layout.addWidget(self.anonymize_frame_log_view)
 
     def update_output_data_view(self):
@@ -203,7 +205,7 @@ class ProjectMainWindow(QMainWindow):
 
     def update_report_metrics_view(self):
         utils_ui.clean_layout(self.metrics_layout)
-        report_metrics_view = ReportMetricsView(self.project_controller)
+        report_metrics_view = ReportMetricsView(self.project_controller, self)
         self.metrics_layout.addWidget(report_metrics_view, 1)
 
     def clean_project_view(self):

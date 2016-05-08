@@ -10,8 +10,8 @@ from af.model.AfManager import AfManager
 
 class PrivacyModelConfigurationView(QtGui.QFrame):
 
-    def __init__(self):
-        super(QFrame, self).__init__()
+    def __init__(self, parent=None):
+        super(QFrame, self).__init__(parent)
         self.af_manager = AfManager()
 
         self.main_layout = QtGui.QVBoxLayout()

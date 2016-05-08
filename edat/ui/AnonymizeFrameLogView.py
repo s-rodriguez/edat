@@ -13,8 +13,8 @@ from edat.utils import strings, EdatLoggingHandler
 
 class AnonymizeFrameLogView(QFrame):
 
-    def __init__(self, button_handle):
-        super(QFrame, self).__init__()
+    def __init__(self, button_handle, parent=None):
+        super(QFrame, self).__init__(parent)
 
         self.main_layout = QHBoxLayout()
         self.button_handle = button_handle
