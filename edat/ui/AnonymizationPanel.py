@@ -258,8 +258,12 @@ class AnonymizationPanel(QtGui.QFrame):
         current_attribute = self.attribute_view.get_current_attribute()
         hierarchy_controller = BaseHierarchyController()
 
-        # TODO: get automatic dimension params from ui
         automatic_dimension_params = {}
+        for i in range(0, self.ad_arguments_layout.count(), 2):
+            parameter_name = str(self.ad_arguments_layout.itemAt(i).widget().text())
+            parameter_value = str(self.ad_arguments_layout.itemAt(i+1).widget().text())
+            automatic_dimension_params[parameter_name] = parameter_value
+
         current_attribute.hierarchy = hierarchy_controller.create_automatic_dimension_hierarchy(str(self.automatic_dimensions_combo.currentText()), automatic_dimension_params, values)
         title = 'Finished'
         text_message = 'Hierarchy Created!'
