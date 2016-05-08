@@ -11,6 +11,7 @@ HIERARCHY_NOT_CREATED = "There is no hierarchy created for this attribute"
 HIERARCHY_STATUS = "Hierarchy Status"
 
 IMPORT_DB_WIZARD = 'Import DB Wizard'
+IMPORT_DB_ERROR = 'Import DB Error'
 IMPORT_PROJECT = 'Import Project'
 IMPORT_PROJECT_ERROR = "Import Project Error"
 

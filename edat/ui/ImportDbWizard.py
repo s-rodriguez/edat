@@ -1,11 +1,14 @@
 from PyQt4 import QtGui
 import os
+from sqlite3 import DatabaseError
 
 from PyQt4.QtCore import SIGNAL, Qt
 from PyQt4.QtGui import QFileDialog, QPushButton, QHBoxLayout, QVBoxLayout, QLineEdit, QFormLayout, QLabel, QRadioButton, \
     QTreeView, QAbstractItemView, QStandardItemModel, QStandardItem
 
 from af.controller.data.DataFactory import DataFactory
+from edat.utils.ui import showMessageAlertBox
+from edat.utils import strings
 
 
 class IntroductionPage(QtGui.QWizardPage):
@@ -65,7 +68,6 @@ class SelectDbPage(QtGui.QWizardPage):
         self.setLayout(self.layout)
 
         self.setWindowTitle('Select DB')
-        # self.resize(300, 300)
         self.show()
 
     def initializePage(self):
@@ -113,12 +115,15 @@ class SelectTablePage(QtGui.QWizardPage):
 
         for controller_type in DataFactory.get_available_controllers():
             selected_button = self.field(controller_type).toPyObject()
-            # TODO : manejo de error
             if selected_button:
                 self.controller = DataFactory.create_controller(self.selected_db, controller_type)
                 break
 
-        self.tables = self.controller.db_available_tables()
+        try:
+            self.tables = self.controller.db_available_tables()
+        except DatabaseError as e:
+            showMessageAlertBox(self, strings.IMPORT_DB_ERROR, e.message)
+
         self.init_model()
 
     def init_model(self):
@@ -161,3 +166,9 @@ class SelectTablePage(QtGui.QWizardPage):
                     self.selected_table = item
 
         self.completeChanged.emit()
+
+    def isComplete(self):
+        if self.selected_table is not None:
+            return True
+        else:
+            return False

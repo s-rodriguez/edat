@@ -12,7 +12,6 @@ class SQLTableView(AbstractDataTableView):
     def create_model(self):
         sql_db = QtSql.QSqlDatabase.addDatabase(self.DATABASE_NAME)
         sql_db.setDatabaseName(self.db_location)
-        # TODO: logear error
         if sql_db.open():
             model = SqlModel(self.table_name, sql_db)
             return model
