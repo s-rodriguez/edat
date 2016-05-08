@@ -12,7 +12,7 @@ from af.controller.hierarchies.BaseHierarchyController import BaseHierarchyContr
 
 class AttributeConfigurationView(QtGui.QFrame):
 
-    def __init__(self, project_controller):
+    def __init__(self, project_controller, parent=None):
         super(QFrame, self).__init__()
         self.project_controller = project_controller
         self.data_config = self.project_controller.project.data_config
@@ -74,7 +74,7 @@ class AttributeConfigurationView(QtGui.QFrame):
         grid_frame.setLayout(grid_layout)
         main_layout.addWidget(grid_frame)
 
-        self.anonymization_panel = AnonymizationPanel(self.project_controller, self)
+        self.anonymization_panel = AnonymizationPanel(self.project_controller, self, self)
         main_layout.addWidget(self.anonymization_panel)
 
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)

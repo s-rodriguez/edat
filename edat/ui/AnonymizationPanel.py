@@ -30,8 +30,8 @@ GENERALIZATION_SLIDER_VALUE = 2
 
 class AnonymizationPanel(QtGui.QFrame):
 
-    def __init__(self, project_controller, attribute_view):
-        super(QtGui.QFrame, self).__init__()
+    def __init__(self, project_controller, attribute_view, parent=None):
+        super(QtGui.QFrame, self).__init__(parent)
         self.af_manager = AfManager()
 
         self.attribute_view = attribute_view

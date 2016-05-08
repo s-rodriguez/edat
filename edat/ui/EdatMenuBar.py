@@ -3,8 +3,8 @@ from PyQt4 import QtGui
 
 class EdatMenuBar(QtGui.QMenuBar):
 
-    def __init__(self, project_main_window):
-        super(EdatMenuBar, self).__init__()
+    def __init__(self, project_main_window, parent=None):
+        super(QtGui.QMenuBar, self).__init__(parent)
         self.project_main_window = project_main_window
 
         self.init_file_menu()

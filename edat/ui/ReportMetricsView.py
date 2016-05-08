@@ -13,8 +13,8 @@ from edat.utils.ui.TextUtils import TextUtils
 
 class ReportMetricsView(QtGui.QFrame):
 
-    def __init__(self, project_controller):
-        super(QtGui.QFrame, self).__init__()
+    def __init__(self, project_controller, parent=None):
+        super(QtGui.QFrame, self).__init__(parent)
 
         self.project_controller = project_controller
         self.transformation_metrics = TransformationMetrics(self.project_controller.project.data_config)
