@@ -180,11 +180,7 @@ class HierarchyView(QtGui.QMainWindow):
             self.hierarchy_table_view.setHorizontalHeaderItem(n_col, QtGui.QTableWidgetItem(self.hierarchy_levels[n_col].name))
 
     def on_new_level(self):
-        hierarchy_items = set()
-        for level in range(1, len(self.hierarchy_levels)):
-            hierarchy_items |= set(self.hierarchy_levels[level].items)
-
-        self.new_level_dialog = HierarchyLevelDialog(hierarchy_items, self)
+        self.new_level_dialog = HierarchyLevelDialog(None, self.get_existing_hierarchy_item_values(), self)
         if self.new_level_dialog.exec_():
             level_items = self.new_level_dialog.get_level_items()
             if level_items:
@@ -192,6 +188,12 @@ class HierarchyView(QtGui.QMainWindow):
                 new_level = HierachyLevel(level_name, level_items, len(self.hierarchy_levels))
                 self.hierarchy_levels.append(new_level)
                 self.update_table_view()
+
+    def get_existing_hierarchy_item_values(self):
+        hierarchy_items = set()
+        for level in range(0, len(self.hierarchy_levels)):
+            hierarchy_items |= set(self.hierarchy_levels[level].items)
+        return hierarchy_items
 
     def load_attributes_finished_update(self, values):
         self.leaf_items = values
@@ -272,7 +274,7 @@ class HierarchyView(QtGui.QMainWindow):
             if SELECT_VALUE_DEFAULT in hierarchy_items:
                 hierarchy_items.pop(0)
 
-            update_level_dialog = HierarchyLevelDialog(set(hierarchy_items), self)
+            update_level_dialog = HierarchyLevelDialog(set(hierarchy_items), self.get_existing_hierarchy_item_values(), self)
             if update_level_dialog.exec_():
                 level_items = update_level_dialog.get_level_items()
 
