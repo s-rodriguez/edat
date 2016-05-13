@@ -177,14 +177,15 @@ class HierarchyView(QtGui.QMainWindow):
 
     def build_columns_headers(self):
         for n_col in range(0, len(self.hierarchy_levels)):
-            self.hierarchy_table_view.setHorizontalHeaderItem(n_col, QtGui.QTableWidgetItem(self.hierarchy_levels[n_col].name))
+            level_name = 'Level ' + str(n_col) + ' ' + self.hierarchy_levels[n_col].name
+            self.hierarchy_table_view.setHorizontalHeaderItem(n_col, QtGui.QTableWidgetItem(level_name))
 
     def on_new_level(self):
         self.new_level_dialog = HierarchyLevelDialog(None, self.get_existing_hierarchy_item_values(), self)
         if self.new_level_dialog.exec_():
             level_items = self.new_level_dialog.get_level_items()
             if level_items:
-                level_name = 'Level ' + str(len(self.hierarchy_levels)) + ' ' + self.new_level_dialog.get_level_name()
+                level_name = self.new_level_dialog.get_level_name()
                 new_level = HierachyLevel(level_name, level_items, len(self.hierarchy_levels))
                 self.hierarchy_levels.append(new_level)
                 self.update_table_view()
@@ -279,7 +280,7 @@ class HierarchyView(QtGui.QMainWindow):
                 level_items = update_level_dialog.get_level_items()
 
                 if level_items:
-                    level_name = 'Level ' + str(len(self.hierarchy_levels)) + ' ' + update_level_dialog.get_level_name()
+                    level_name = update_level_dialog.get_level_name()
 
                     new_level = HierachyLevel(level_name, level_items, len(self.hierarchy_levels))
                     self.hierarchy_levels.insert(level_id, new_level)
