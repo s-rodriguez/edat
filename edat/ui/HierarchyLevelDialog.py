@@ -8,7 +8,7 @@ from edat.utils import strings
 
 class HierarchyLevelDialog(QtGui.QDialog):
 
-    def __init__(self, existing_level_item_values, existing_hierarchy_item_values, parent=None):
+    def __init__(self, existing_level_item_values, existing_hierarchy_item_values, existing_level_name, parent=None):
         super(QtGui.QDialog, self).__init__(parent)
         self.existing_level_item_values = existing_level_item_values
         self.existing_hierarchy_item_values = existing_hierarchy_item_values
@@ -17,6 +17,8 @@ class HierarchyLevelDialog(QtGui.QDialog):
 
         level_name_form_view = QtGui.QFormLayout()
         self.level_name_edit_text = QtGui.QLineEdit()
+        if existing_level_name:
+            self.level_name_edit_text.setText(existing_level_name)
         level_name_form_view.addRow("Level Name: ", self.level_name_edit_text)
         main_layout.addLayout(level_name_form_view)
 
