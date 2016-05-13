@@ -52,7 +52,10 @@ class ProjectController:
         project_file_location = os.path.join(path_location, name + EDAT_PROJECT_EXTENSION)
         if os.path.isdir(path_location) and os.path.isfile(project_file_location):
             self.project = Project(name, path_location)
-            self.project.load_project_file(project_file_location)
+            try:
+                self.project.load_project_file(project_file_location)
+            except Exception:
+                raise ImportException("The configuration file of the edat project is corrupted o bad formed")
             return self.project
         else:
             raise ImportException('There is no edat project on the selected location with that name')
