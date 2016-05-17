@@ -70,14 +70,19 @@ class ReportMetricsView(QtGui.QFrame):
         self.general_information_layout.addWidget(table_frame)
 
     def set_additional_information_panel(self):
-        self.additional_information_frame = QtGui.QFrame()
+        self.additional_information_frame = QtGui.QScrollArea()
         self.additional_information_layout = QtGui.QVBoxLayout()
 
         self.additional_information_layout.addWidget(TextUtils.get_header_styled_text("Additional Information"))
         self.add_additional_info()
 
+        scroll_widget = QtGui.QWidget()
+        scroll_widget.setLayout(self.additional_information_layout)
+
+        self.additional_information_frame.setWidget(scroll_widget)
+        self.additional_information_frame.setWidgetResizable(True)
         self.additional_information_frame.setFrameStyle(QtGui.QFrame.StyledPanel | QtGui.QFrame.Plain)
-        self.additional_information_frame.setLayout(self.additional_information_layout)
+
         self.main_layout.addWidget(self.additional_information_frame)
 
     def add_additional_info(self):
@@ -89,7 +94,7 @@ class ReportMetricsView(QtGui.QFrame):
         for key in sorted(additional_info_dict.keys()):
             title = additional_info_dict[key][0]
             value = additional_info_dict[key][1]
-            if len(value) < 100:
+            if len(value) < 50:
                 h_frame = self.create_hbox_frame_title_and_value(title, value)
                 additional_info_layout.addWidget(h_frame, 0, Qt.AlignLeft)
             else:
@@ -163,11 +168,10 @@ class ReportMetricsView(QtGui.QFrame):
     def get_scrollable_area_with_value(value):
         scroll_widget = QtGui.QWidget()
         scroll_area = QtGui.QScrollArea()
-        scroll_area.setMaximumHeight(120)
         scroll_layout = QtGui.QVBoxLayout()
         scroll_widget.setLayout(scroll_layout)
 
-        scroll_layout.addWidget(TextUtils.get_caption_styled_text("{0}".format(str(value))))
+        scroll_layout.addWidget(TextUtils.get_caption_styled_text("{0}".format(str(value)), size=10))
 
         scroll_area.setWidget(scroll_widget)
         scroll_area.setWidgetResizable(True)

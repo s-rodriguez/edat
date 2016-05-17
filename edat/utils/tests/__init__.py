@@ -16,3 +16,5 @@ def create_full_project():
         f_output.write(project.project_file_representation(save=True))
 
     print "Project file created on: %s" % file_location
+
+create_full_project()
