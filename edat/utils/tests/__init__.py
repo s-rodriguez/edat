@@ -17,4 +17,3 @@ def create_full_project():
 
     print "Project file created on: %s" % file_location
 
-create_full_project()
